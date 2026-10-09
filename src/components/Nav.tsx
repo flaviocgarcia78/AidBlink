@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import WalletButton from "@/components/wallet/WalletButton";
 import { cx } from "@/components/ui";
 import { env } from "@/lib/env";
+
+interface SessionInfo {
+  role: "org" | "partner";
+  user: string;
+}
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -20,6 +26,28 @@ function isActive(pathname: string, href: string): boolean {
 
 export default function Nav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [session, setSession] = useState<SessionInfo | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : { session: null }))
+      .then((data: { session: SessionInfo | null }) => {
+        if (active) setSession(data.session ?? null);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [pathname]);
+
+  async function signOut() {
+    await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+    setSession(null);
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-md">
@@ -58,6 +86,30 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {session ? (
+            <>
+              <span className="hidden flex-col items-end leading-tight sm:flex">
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                  {session.role === "org" ? "Organization" : "Partner"}
+                </span>
+                <span className="mono text-xs text-slate-600">{session.user}</span>
+              </span>
+              <button
+                type="button"
+                onClick={signOut}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+            >
+              Sign in
+            </Link>
+          )}
           <WalletButton />
         </div>
       </div>

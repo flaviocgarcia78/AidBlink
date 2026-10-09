@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { ApiError, fail, json } from "@/lib/api";
 import { effectiveStatus } from "@/lib/aid";
+import { requireRole } from "@/lib/auth";
 import { createRequest, snapshot, update } from "@/lib/store";
 import type { AidCategory } from "@/lib/types";
 
@@ -32,6 +33,7 @@ export async function GET() {
 /** Create a new aid request. Accepts only pseudonymous beneficiary references. */
 export async function POST(req: NextRequest) {
   try {
+    await requireRole("org");
     const body = (await req.json().catch(() => ({}))) as {
       beneficiaryRef?: string;
       category?: string;

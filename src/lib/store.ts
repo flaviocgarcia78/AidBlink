@@ -66,12 +66,14 @@ function seed(): StoreData {
         confirmedAt: nowIso(),
       },
     ],
+    // Pending requests sized to the on-chain treasury float so the demo starts
+    // coherent (approving them never pushes the available budget negative).
     requests: [
       {
         id: "REQ-1001",
         beneficiaryRef: "BEN-4821",
         category: "food",
-        amountUsd: 30,
+        amountUsd: 5,
         note: "Meal basket for a family of four.",
         status: "pending",
         createdAt: nowIso(),
@@ -80,7 +82,7 @@ function seed(): StoreData {
         id: "REQ-1002",
         beneficiaryRef: "BEN-7310",
         category: "transport",
-        amountUsd: 15,
+        amountUsd: 2.5,
         note: "Bus fare to a medical appointment.",
         status: "pending",
         createdAt: nowIso(),

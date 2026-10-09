@@ -47,6 +47,15 @@ The one-time rule is **not** a property of the QR code. It is enforced by an
 atomic state transition on the server (`UPDATE ... WHERE status = 'issued'`). A
 second redemption is rejected and logged — this is the core of the demo.
 
+The **only on-chain money movement is the contribution**. Redeeming a voucher
+does **not** pay the partner or the beneficiary on-chain: it flips the voucher
+state in the store and (optionally) writes an audit **memo**. The SOL stays in
+the treasury. The benefit amount is a simulated USD figure.
+
+The dashboard also enforces a **budget guard**: an approval that would allocate
+more than the on-chain raised amount is rejected, so `Available` never goes
+negative and the ledger stays coherent.
+
 ## Tech stack
 
 - **Next.js 16** (App Router, Turbopack) + **React 19** + **TypeScript**
@@ -63,11 +72,15 @@ src/
   app/
     page.tsx                     Landing / problem statement
     contribute/                  Blink + in-app contribution flow
-    admin/                       Organization dashboard
+    admin/                       Organization dashboard (demo login required)
+    login/                       Demo sign in (organization / partner)
     voucher/[id]/                Beneficiary voucher with QR code
-    redeem/                      Partner redemption simulator
+    redeem/                      Partner redemption simulator (demo login required)
     api/
       actions/donate/            Solana Action (Blink) GET + POST
+      auth/login/                Demo sign in -> signed session cookie
+      auth/logout/               Clear the session
+      auth/session/              Current session for the nav
       donations/                 List / verify / record contributions
       balance/                   Treasury ledger summary
       requests/                  List / create aid requests
@@ -78,6 +91,7 @@ src/
       redemptions/               Redemption history + rejected attempts
   lib/
     env.ts        Runtime configuration
+    auth.ts       Demo login: credentials, signed session cookie, role guard
     solana.ts     Connection, treasury balance, memo anchor
     program.ts    AidBlink program client (encode ix, decode accounts)
     voucher.ts    HMAC-signed voucher tokens
@@ -142,8 +156,28 @@ Open:
 
 - `/` — problem and overview
 - `/contribute` — contribute SOL (real) or record a simulated contribution
-- `/admin` — organization dashboard
-- `/redeem` — partner simulator
+- `/login` — demo sign in (organization or partner)
+- `/admin` — organization dashboard (requires the demo organization session)
+- `/redeem` — partner simulator (requires the demo partner session)
+
+### Demo sign in
+
+The organization dashboard and the partner terminal are gated by a lightweight
+demo login (a signed, HttpOnly cookie). Contributors and beneficiaries never
+need an account.
+
+| Role | User | Password | Lands on |
+| --- | --- | --- | --- |
+| Organization | `org@aidblink.demo` | `aidblink-org` | `/admin` |
+| Partner | `parceiro@aidblink.demo` | `aidblink-parceiro` | `/redeem` |
+
+Override these in `.env` (`AIDBLINK_ORG_USER` / `AIDBLINK_ORG_PASSWORD`,
+`AIDBLINK_PARTNER_USER` / `AIDBLINK_PARTNER_PASSWORD`) and set
+`AIDBLINK_DEMO_HINTS=0` to hide the prefilled demo credentials on the login
+page. The session cookie is signed with `AIDBLINK_AUTH_SECRET` (falling back to
+`AIDBLINK_VOUCHER_SECRET`). Mutating API routes enforce the role too, so the
+gate cannot be bypassed by calling the API directly. This is a demo gate, not
+production authN — swap it for a real identity provider before shipping.
 
 ### Environment variables
 
@@ -154,6 +188,10 @@ Open:
 | `AIDBLINK_TREASURY_ADDRESS` / `NEXT_PUBLIC_TREASURY_ADDRESS` | Public address that receives contributions |
 | `AIDBLINK_PROGRAM_ID` | Deployed AidBlink program id (defaults to the devnet program in this repo) |
 | `AIDBLINK_VOUCHER_SECRET` | HMAC secret for voucher tokens (server only) |
+| `AIDBLINK_ORG_USER` / `AIDBLINK_ORG_PASSWORD` | Demo organization login |
+| `AIDBLINK_PARTNER_USER` / `AIDBLINK_PARTNER_PASSWORD` | Demo partner login |
+| `AIDBLINK_AUTH_SECRET` | HMAC secret for the login session cookie |
+| `AIDBLINK_DEMO_HINTS` | `0` hides the prefilled demo credentials on `/login` |
 | `NEXT_PUBLIC_SOL_USD_RATE` | Illustrative SOL/USD rate for budgeting |
 | `AIDBLINK_ANCHOR_SECRET_KEY` | Optional server keypair to anchor redemptions on-chain |
 | `AIDBLINK_VOUCHER_TTL_DAYS` | Voucher lifetime (default 30) |

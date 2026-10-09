@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { redeemVoucher } from "@/lib/aid";
 import { ApiError, fail, json } from "@/lib/api";
+import { requireRole } from "@/lib/auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,6 +12,7 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(req: NextRequest) {
   try {
+    await requireRole("partner");
     const body = (await req.json().catch(() => ({}))) as {
       token?: string;
       merchant?: string;

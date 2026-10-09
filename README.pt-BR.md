@@ -48,6 +48,15 @@ A regra de uso único **não** é propriedade do QR code. Ela é garantida por u
 transição de estado atômica no servidor (`UPDATE ... WHERE status = 'issued'`).
 Um segundo resgate é rejeitado e registrado — esse é o coração da demonstração.
 
+O **único movimento de dinheiro on-chain é a contribuição**. Resgatar um voucher
+**não** paga o parceiro nem o beneficiário on-chain: apenas muda o estado do
+voucher no armazenamento e (opcionalmente) grava um **memo** de auditoria. O SOL
+permanece no tesouro. O valor do benefício é uma cifra simulada em USD.
+
+O painel também aplica uma **trava de orçamento**: uma aprovação que alocaria
+mais do que o total arrecadado on-chain é rejeitada, então o `Disponível` nunca
+fica negativo e o livro-razão continua coerente.
+
 ## Stack técnica
 
 - **Next.js 16** (App Router, Turbopack) + **React 19** + **TypeScript**
@@ -65,11 +74,15 @@ src/
   app/
     page.tsx                     Página inicial / problema
     contribute/                  Blink + fluxo de contribuição no app
-    admin/                       Painel da organização
+    admin/                       Painel da organização (requer login demo)
+    login/                       Login demo (organização / parceiro)
     voucher/[id]/                Voucher do beneficiário com QR code
-    redeem/                      Simulador de resgate do parceiro
+    redeem/                      Simulador de resgate do parceiro (requer login demo)
     api/
       actions/donate/            Solana Action (Blink) GET + POST
+      auth/login/                Login demo -> cookie de sessão assinado
+      auth/logout/               Limpa a sessão
+      auth/session/              Sessão atual para a navegação
       donations/                 Listar / verificar / registrar contribuições
       balance/                   Resumo do caixa do tesouro
       requests/                  Listar / criar pedidos de ajuda
@@ -80,6 +93,7 @@ src/
       redemptions/               Histórico de resgates + tentativas rejeitadas
   lib/
     env.ts        Configuração de runtime
+    auth.ts       Login demo: credenciais, cookie de sessão assinado, guarda de papel
     solana.ts     Conexão, saldo do tesouro, ancoragem por memo
     program.ts    Cliente do programa AidBlink (codifica ix, decodifica contas)
     voucher.ts    Tokens de voucher assinados com HMAC
@@ -145,8 +159,29 @@ Abra:
 
 - `/` — problema e visão geral
 - `/contribute` — contribuir com SOL (real) ou registrar uma contribuição simulada
-- `/admin` — painel da organização
-- `/redeem` — simulador do parceiro
+- `/login` — login demo (organização ou parceiro)
+- `/admin` — painel da organização (requer a sessão demo da organização)
+- `/redeem` — simulador do parceiro (requer a sessão demo do parceiro)
+
+### Login demo
+
+O painel da organização e o terminal do parceiro são protegidos por um login
+demo leve (um cookie HttpOnly assinado). Apoiadores e beneficiários nunca
+precisam de conta.
+
+| Papel | Usuário | Senha | Vai para |
+| --- | --- | --- | --- |
+| Organização | `org@aidblink.demo` | `aidblink-org` | `/admin` |
+| Parceiro | `parceiro@aidblink.demo` | `aidblink-parceiro` | `/redeem` |
+
+Altere-os no `.env` (`AIDBLINK_ORG_USER` / `AIDBLINK_ORG_PASSWORD`,
+`AIDBLINK_PARTNER_USER` / `AIDBLINK_PARTNER_PASSWORD`) e defina
+`AIDBLINK_DEMO_HINTS=0` para esconder as credenciais demo pré-preenchidas na
+página de login. O cookie de sessão é assinado com `AIDBLINK_AUTH_SECRET`
+(usando `AIDBLINK_VOUCHER_SECRET` como fallback). As rotas de API que mudam
+estado também verificam o papel, então a barreira não pode ser burlada chamando
+a API diretamente. Isto é uma barreira de demonstração, não autenticação de
+produção — troque por um provedor de identidade real antes de publicar.
 
 ### Variáveis de ambiente
 
@@ -157,6 +192,10 @@ Abra:
 | `AIDBLINK_TREASURY_ADDRESS` / `NEXT_PUBLIC_TREASURY_ADDRESS` | Endereço público que recebe as contribuições |
 | `AIDBLINK_PROGRAM_ID` | Id do programa AidBlink implantado (padrão: o programa devnet deste repositório) |
 | `AIDBLINK_VOUCHER_SECRET` | Segredo HMAC dos tokens de voucher (apenas no servidor) |
+| `AIDBLINK_ORG_USER` / `AIDBLINK_ORG_PASSWORD` | Login demo da organização |
+| `AIDBLINK_PARTNER_USER` / `AIDBLINK_PARTNER_PASSWORD` | Login demo do parceiro |
+| `AIDBLINK_AUTH_SECRET` | Segredo HMAC do cookie de sessão do login |
+| `AIDBLINK_DEMO_HINTS` | `0` esconde as credenciais demo pré-preenchidas em `/login` |
 | `NEXT_PUBLIC_SOL_USD_RATE` | Taxa SOL/USD ilustrativa para orçamento |
 | `AIDBLINK_ANCHOR_SECRET_KEY` | Keypair opcional do servidor para ancorar resgates on-chain |
 | `AIDBLINK_VOUCHER_TTL_DAYS` | Validade do voucher (padrão 30) |

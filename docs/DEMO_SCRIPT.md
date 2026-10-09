@@ -19,9 +19,13 @@
    this repo.
 3. Install Phantom, switch it to **Devnet**, fund it with test SOL
    (https://faucet.solana.com).
-4. Open `/admin` once and click **Refresh** to confirm the balance loads.
-5. Have a second browser tab ready with the Solana Explorer.
-6. Decide your demo beneficiary codes (e.g. `BEN-4821`, `BEN-7310`).
+4. Sign in at `/login` with the demo organization user
+   (`org@aidblink.demo` / `aidblink-org`) and confirm the dashboard loads, then
+   sign out.
+5. Sign in as the partner (`parceiro@aidblink.demo` / `aidblink-parceiro`) in a
+   second tab and confirm the terminal loads, then sign out.
+6. Have a second browser tab ready with the Solana Explorer.
+7. Decide your demo beneficiary codes (e.g. `BEN-4821`, `BEN-7310`).
 
 > To redeploy or change the program, run `npm run program:deploy` (build +
 > deploy + pool init). The program is already live on Devnet with id
@@ -73,7 +77,8 @@ is tagged on-chain and links to the transaction).
 
 ## 1:00–1:40 — Step 2: Administer (organization dashboard)
 
-**Screen:** click **Org dashboard** (`/admin`).
+**Screen:** click **Org dashboard** (`/admin`) → sign in with the demo
+organization user if prompted (`org@aidblink.demo` / `aidblink-org`).
 
 **Actions:**
 1. Point to the stats: **Raised**, **Available**, **Allocated**, **Redeemed**.
@@ -81,6 +86,11 @@ is tagged on-chain and links to the transaction).
    **$30**, note *"Meal basket"*, click **Create request**.
 3. Find the new request in the list and click **Approve**.
 4. Show the message: *Voucher VCH-… issued*.
+
+> If approving is blocked, the treasury does not cover the request yet — show
+> the **Insufficient treasury budget** message, then contribute in step 1 or use
+> a smaller amount. The budget guard keeps `Available` from going negative, so a
+> contribution of **0.1 SOL** is enough to approve a $30 request.
 
 **Voice-over:**
 > "The organization sees a transparent pool, reads the balance straight from the
@@ -107,7 +117,9 @@ is tagged on-chain and links to the transaction).
 
 ## 2:05–2:35 — Partner redemption and the anti-reuse proof
 
-**Screen:** click **Open in partner simulator** (`/redeem?token=…`).
+**Screen:** click **Open in partner simulator** (`/redeem?token=…`) → sign in
+with the demo partner user if prompted (`parceiro@aidblink.demo` /
+`aidblink-parceiro`).
 
 **Actions:**
 1. Set the partner name (e.g. **Mercado Central**).

@@ -63,8 +63,10 @@ solana airdrop 1 <ANCHOR_PUBLIC> --url devnet
 # Or use https://faucet.solana.com
 ```
 
-Then try the flow: `/contribute` → `/admin` → `/voucher/[id]` → `/redeem`
-(redeem twice to see the anti-reuse rejection).
+Then try the flow: `/contribute` → `/admin` (sign in as `org@aidblink.demo` /
+`aidblink-org`) → `/voucher/[id]` → `/redeem` (sign in as
+`parceiro@aidblink.demo` / `aidblink-parceiro`). Redeem twice to see the
+anti-reuse rejection.
 
 ## What is real vs. simulated (state this in the submission)
 
@@ -72,7 +74,11 @@ Then try the flow: `/contribute` → `/admin` → `/voucher/[id]` → `/redeem`
   (one `Donation` PDA per contribution), on-chain IDL published, treasury
   balance reads, optional memo anchoring, one-time redemption enforcement.
 - **Simulated:** USD benefit values, partners, redemption at a real merchant,
-  and the vouchers themselves (no monetary value).
+  and the vouchers themselves (no monetary value). Redemption does **not** pay
+  the partner or beneficiary on-chain — it only flips the voucher state and,
+  optionally, writes an audit memo. The SOL stays in the treasury.
+- **Gated (demo login):** the organization dashboard and the partner terminal
+  use example users. Mutating API routes enforce the role server-side.
 
 ## Mapping to typical judging criteria
 

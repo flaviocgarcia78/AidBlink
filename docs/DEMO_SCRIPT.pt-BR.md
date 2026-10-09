@@ -19,10 +19,13 @@
    repositório.
 3. Instale a Phantom, mude para **Devnet**, abasteça com SOL de teste
    (https://faucet.solana.com).
-4. Abra `/admin` uma vez e clique em **Refresh** para confirmar que o saldo
-   carrega.
-5. Tenha uma segunda aba pronta com o Solana Explorer.
-6. Defina seus códigos de beneficiário para a demo (ex.: `BEN-4821`, `BEN-7310`).
+4. Faça login em `/login` com o usuário demo da organização
+   (`org@aidblink.demo` / `aidblink-org`) e confirme que o painel carrega;
+   depois saia.
+5. Faça login como parceiro (`parceiro@aidblink.demo` / `aidblink-parceiro`) em
+   uma segunda aba e confirme que o terminal carrega; depois saia.
+6. Tenha uma segunda aba pronta com o Solana Explorer.
+7. Defina seus códigos de beneficiário para a demo (ex.: `BEN-4821`, `BEN-7310`).
 
 > Para reimplantar ou mudar o programa, rode `npm run program:deploy` (build +
 > deploy + init do pool). O programa já está no ar na Devnet com id
@@ -76,7 +79,8 @@ atualizadas (a linha fica marcada como on-chain e linka para a transação).
 
 ## 1:00–1:40 — Etapa 2: Administrar (painel da organização)
 
-**Tela:** clique em **Painel da organização** (`/admin`).
+**Tela:** clique em **Painel da organização** (`/admin`) → faça login com o
+usuário demo da organização se solicitado (`org@aidblink.demo` / `aidblink-org`).
 
 **Ações:**
 1. Aponte para as estatísticas: **Arrecadado**, **Disponível**, **Alocado**,
@@ -86,6 +90,12 @@ atualizadas (a linha fica marcada como on-chain e linka para a transação).
    pedido**.
 3. Encontre o novo pedido na lista e clique em **Aprovar**.
 4. Mostre a mensagem: *Voucher VCH-… emitido*.
+
+> Se a aprovação for bloqueada, o tesouro ainda não cobre o pedido — mostre a
+> mensagem **Orçamento insuficiente do tesouro** e então contribua na etapa 1 ou
+> use um valor menor. A trava de orçamento impede que o **Disponível** fique
+> negativo, então uma contribuição de **0.1 SOL** já basta para aprovar um pedido
+> de $30.
 
 **Narração:**
 > "A organização vê um caixa transparente, lê o saldo direto da chain e registra
@@ -113,7 +123,9 @@ atualizadas (a linha fica marcada como on-chain e linka para a transação).
 
 ## 2:05–2:35 — Resgate pelo parceiro e a prova anti-reuso
 
-**Tela:** clique em **Abrir no simulador do parceiro** (`/redeem?token=…`).
+**Tela:** clique em **Abrir no simulador do parceiro** (`/redeem?token=…`) → faça
+login com o usuário demo do parceiro se solicitado (`parceiro@aidblink.demo` /
+`aidblink-parceiro`).
 
 **Ações:**
 1. Defina o nome do parceiro (ex.: **Mercado Central**).

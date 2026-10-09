@@ -65,7 +65,10 @@ Entradas `simulated: true` são guardadas localmente e marcadas como
 - `POST /api/requests` cria um pedido contendo apenas uma **referência
   pseudônima** (`beneficiaryRef`), uma categoria e um valor em USD.
 - `POST /api/requests/:id/approve` faz uma transição atômica
-  `pending → approved` e emite um voucher.
+  `pending → approved` e emite um voucher. Também aplica uma **trava de
+  orçamento**: o valor do pedido não pode exceder `arrecadado − alocado`
+  (calculado a partir do livro-razão on-chain), então o `Disponível` nunca fica
+  negativo.
 - `GET /api/balance` retorna o resumo do caixa mais o saldo on-chain do tesouro
   ao vivo.
 
@@ -74,7 +77,20 @@ Entradas `simulated: true` são guardadas localmente e marcadas como
 - `GET /api/vouchers/:id` retorna o voucher, um token assinado e um QR code cujo
   conteúdo é a URL de resgate do parceiro (`/redeem?token=...`).
 - `POST /api/redeem` verifica o token e faz uma transição atômica
-  `issued → redeemed`.
+  `issued → redeemed`. Ele **não** move valor on-chain: o único efeito on-chain
+  opcional é o memo de auditoria. O SOL permanece no tesouro.
+
+## Autenticação de demonstração
+
+`/admin` (organização) e `/redeem` (parceiro) são protegidos por um login demo
+leve. As credenciais vêm de variáveis de ambiente com padrões seguros; um cookie
+HttpOnly assinado (`aidblink_session`) carrega o papel. Os componentes de página
+leem a sessão no servidor (`src/lib/auth.ts`) e redirecionam para `/login`; as
+rotas de API que mudam estado (`POST /api/requests`, `/api/requests/:id/approve`,
+`POST /api/redeem`) chamam `requireRole(...)`, então a barreira não pode ser
+burlada chamando a API diretamente. As leituras (saldos, listas) continuam
+públicas e contêm apenas dados pseudônimos. Isto é uma barreira de demonstração,
+não autenticação de produção.
 
 ## Modelo de segurança do voucher
 
@@ -175,7 +191,7 @@ Veja a tabela no `README.pt-BR.md`. Pontos-chave:
 | Doação falsa registrada | `donate` grava o registro e move os fundos numa instrução | Indexador / webhook |
 | Doação contada em dobro | Um PDA `Donation` por tx; a listagem lê contas, não a entrada do cliente | Restrição de unicidade |
 | Dados pessoais vazados | Apenas refs pseudônimos | Política de minimização de dados |
-| Aprovação anônima de equipe | Nenhuma | AuthN/AuthZ + log de auditoria |
+| Aprovação anônima de equipe | Barreira de papel (login demo) nas páginas + APIs que mudam estado | Provedor de identidade (OIDC) + log de auditoria por usuário |
 
 ## Não-objetivos deliberados (para o hackathon)
 
@@ -187,7 +203,7 @@ Veja a tabela no `README.pt-BR.md`. Pontos-chave:
 ## Evoluindo para produção
 
 1. Trocar o store JSON por Postgres e restrições de unicidade.
-2. Adicionar autenticação e papéis para o painel da organização.
+2. Trocar o login demo por um provedor de identidade real e logs de auditoria por usuário.
 3. Mover o estado do voucher para um programa Solana (PDA por voucher) para uso
    único on-chain, mantendo a mesma interface de token.
 4. Integrar parceiros reais e um fluxo de liquidação de reembolso.

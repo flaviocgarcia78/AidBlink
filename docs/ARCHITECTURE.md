@@ -65,7 +65,9 @@ they never count toward the on-chain ledger.
 - `POST /api/requests` creates a request containing a **pseudonymous reference**
   only (`beneficiaryRef`), a category and a USD amount.
 - `POST /api/requests/:id/approve` performs an atomic transition
-  `pending → approved` and issues a voucher.
+  `pending → approved` and issues a voucher. It also enforces a **budget guard**:
+  the request amount cannot exceed `raised − allocated` (computed from the
+  on-chain ledger), so `Available` never goes negative.
 - `GET /api/balance` returns the ledger summary plus the live on-chain treasury
   balance.
 
@@ -74,7 +76,19 @@ they never count toward the on-chain ledger.
 - `GET /api/vouchers/:id` returns the voucher, a signed token and a QR code
   whose content is the partner redemption URL (`/redeem?token=...`).
 - `POST /api/redeem` verifies the token and performs an atomic
-  `issued → redeemed` transition.
+  `issued → redeemed` transition. It moves **no** on-chain value: the only
+  optional on-chain side effect is the audit memo. The SOL stays in the treasury.
+
+## Demo authentication
+
+`/admin` (organization) and `/redeem` (partner) are gated by a lightweight demo
+login. Credentials come from environment variables with safe defaults; a signed,
+HttpOnly cookie (`aidblink_session`) carries the role. Page components read the
+session server-side (`src/lib/auth.ts`) and redirect to `/login`; the mutating
+API routes (`POST /api/requests`, `/api/requests/:id/approve`, `POST /api/redeem`)
+call `requireRole(...)`, so the gate cannot be bypassed by calling the API
+directly. Reads (balances, lists) stay public and contain only pseudonymous
+data. This is a demo gate, not production authN.
 
 ## Voucher security model
 
@@ -174,7 +188,7 @@ See the table in `README.md`. Key points:
 | Fake donation recorded | `donate` writes the record and moves the funds in one instruction | Indexer / webhook |
 | Double-counted donation | One `Donation` PDA per tx; listing reads accounts, not client input | Unique constraint |
 | Leaked personal data | Pseudonymous refs only | Data-minimization policy |
-| Anonymous staff approval | None | AuthN/AuthZ + audit log |
+| Anonymous staff approval | Demo login role gate on pages + mutating APIs | Identity provider (OIDC) + per-user audit log |
 
 ## Deliberate non-goals (for the hackathon)
 
@@ -186,7 +200,7 @@ See the table in `README.md`. Key points:
 ## Extending toward production
 
 1. Replace the JSON store with Postgres and unique constraints.
-2. Add authentication and roles for the organization dashboard.
+2. Replace the demo login with a real identity provider and per-user audit logs.
 3. Move voucher state to a Solana program (PDA per voucher) for on-chain
    single-use enforcement, keeping the same token interface.
 4. Integrate real partners and a reimbursement settlement flow.

@@ -1,6 +1,6 @@
 import { ApiError } from "./api";
 import { env } from "./env";
-import { round2 } from "./money";
+import { formatUsd, round2 } from "./money";
 import { anchorMemo, isAnchoringEnabled } from "./solana";
 import { nextVoucherId, update } from "./store";
 import type {
@@ -28,13 +28,34 @@ export interface ApprovalResult {
   voucher: Voucher;
 }
 
+export interface ApproveOptions {
+  /**
+   * Current treasury budget in USD (raised minus already allocated). When
+   * provided, an approval that would exceed it is rejected, so the ledger can
+   * never show a negative available balance.
+   */
+  availableUsd?: number;
+}
+
 /** Approve a pending request and issue the matching one-time voucher. */
-export async function approveRequest(requestId: string): Promise<ApprovalResult> {
+export async function approveRequest(
+  requestId: string,
+  options: ApproveOptions = {},
+): Promise<ApprovalResult> {
   return update((data) => {
     const request = data.requests.find((r) => r.id === requestId);
     if (!request) throw new ApiError(`Request ${requestId} not found`, 404);
     if (request.status !== "pending") {
       throw new ApiError(`Request ${requestId} is already ${request.status}`, 409);
+    }
+    if (
+      options.availableUsd !== undefined &&
+      request.amountUsd > options.availableUsd
+    ) {
+      throw new ApiError(
+        `Insufficient treasury budget: ${formatUsd(options.availableUsd)} available, ${formatUsd(request.amountUsd)} requested. Contribute to the treasury before approving.`,
+        409,
+      );
     }
 
     const now = new Date();

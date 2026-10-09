@@ -64,8 +64,10 @@ solana airdrop 1 <ANCHOR_PUBLIC> --url devnet
 # Ou use https://faucet.solana.com
 ```
 
-Depois teste o fluxo: `/contribute` → `/admin` → `/voucher/[id]` → `/redeem`
-(resgate duas vezes para ver a rejeição anti-reuso).
+Depois teste o fluxo: `/contribute` → `/admin` (login como `org@aidblink.demo` /
+`aidblink-org`) → `/voucher/[id]` → `/redeem` (login como
+`parceiro@aidblink.demo` / `aidblink-parceiro`). Resgate duas vezes para ver a
+rejeição anti-reuso.
 
 ## O que é real vs. simulado (diga isso na submissão)
 
@@ -74,7 +76,12 @@ Depois teste o fluxo: `/contribute` → `/admin` → `/voucher/[id]` → `/redee
   do saldo do tesouro, ancoragem por memo opcional, uso único garantido no
   resgate.
 - **Simulado:** valores de benefício em USD, parceiros, resgate em um comércio
-  real e os próprios vouchers (sem valor monetário).
+  real e os próprios vouchers (sem valor monetário). O resgate **não** paga o
+  parceiro nem o beneficiário on-chain — apenas muda o estado do voucher e,
+  opcionalmente, grava um memo de auditoria. O SOL permanece no tesouro.
+- **Protegido (login demo):** o painel da organização e o terminal do parceiro
+  usam usuários de exemplo. As rotas de API que mudam estado verificam o papel no
+  servidor.
 
 ## Mapeamento para os critérios típicos de avaliação
 
