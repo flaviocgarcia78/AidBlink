@@ -3,7 +3,6 @@ import {
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
-  SystemProgram,
   Transaction,
   TransactionInstruction,
   sendAndConfirmTransaction,
@@ -81,92 +80,13 @@ export async function getTreasuryLamports(): Promise<number | null> {
   }
 }
 
-/* ------------------------- contribution transaction --------------------- */
+/* --------------------- contribution transaction ---------------- */
 
-export interface BuiltContribution {
-  /** Base64 serialized, unsigned transaction for the donor wallet to sign. */
-  transaction: string;
-  blockhash: string;
-  lastValidBlockHeight: number;
-}
-
-/**
- * Build an unsigned SOL transfer from the donor to the treasury, ready to be
- * returned by the Blink action endpoint and signed by the donor's wallet.
+/*
+ * Building and verifying contribution transactions lives in `program.ts`,
+ * because contributions are recorded by the AidBlink Anchor program rather
+ * than a raw SystemProgram transfer.
  */
-export async function buildContributionTransaction(
-  donor: PublicKey,
-  lamports: number,
-): Promise<BuiltContribution> {
-  const treasury = getTreasuryPublicKey();
-  const connection = getConnection();
-
-  const transaction = new Transaction().add(
-    SystemProgram.transfer({
-      fromPubkey: donor,
-      toPubkey: treasury,
-      lamports,
-    }),
-  );
-  transaction.feePayer = donor;
-
-  const latest = await connection.getLatestBlockhash("confirmed");
-  transaction.recentBlockhash = latest.blockhash;
-
-  const serialized = transaction
-    .serialize({ requireAllSignatures: false, verifySignatures: false })
-    .toString("base64");
-
-  return {
-    transaction: serialized,
-    blockhash: latest.blockhash,
-    lastValidBlockHeight: latest.lastValidBlockHeight,
-  };
-}
-
-/* --------------------- on-chain verification of donations --------------- */
-
-export interface ParsedDonation {
-  lamports: number;
-  donor: string;
-}
-
-/**
- * Fetch a confirmed transaction and sum the SOL sent to the treasury. Returns
- * null when the transaction is missing or contains no transfer to the treasury.
- */
-export async function parseDonation(
-  signature: string,
-): Promise<ParsedDonation | null> {
-  const connection = getConnection();
-  const tx = await connection.getParsedTransaction(signature, {
-    commitment: "confirmed",
-    maxSupportedTransactionVersion: 0,
-  });
-  if (!tx || !tx.meta) return null;
-
-  const treasury = env.treasuryAddress;
-  const accountKeys = tx.transaction.message.accountKeys.map((k) =>
-    typeof k === "string" ? k : k.pubkey.toBase58(),
-  );
-  const feePayer = accountKeys[0];
-  let lamports = 0;
-
-  for (const ix of tx.transaction.message.instructions) {
-    if (
-      "program" in ix &&
-      ix.program === "system" &&
-      "parsed" in ix &&
-      ix.parsed?.type === "transfer" &&
-      ix.parsed?.info?.destination === treasury
-    ) {
-      lamports += Number(ix.parsed.info.lamports ?? 0);
-    }
-  }
-
-  if (lamports <= 0) return null;
-  return { lamports, donor: feePayer };
-}
 
 /* --------------------------- transparency anchor ------------------------ */
 

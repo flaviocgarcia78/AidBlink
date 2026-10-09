@@ -1,5 +1,7 @@
 # AidBlink — Architecture
 
+> 🌐 **Português (BR):** [ARCHITECTURE.pt-BR.md](./ARCHITECTURE.pt-BR.md)
+
 ## Overview
 
 AidBlink is a single Next.js application. It exposes one web UI for three roles
@@ -8,10 +10,13 @@ Solana Action (Blink) endpoint for contributions.
 
 ```
                  Solana Devnet
-        ┌────────────────────────────────┐
-        │  Treasury account (receives SOL)│
-        │  Optional memo anchor program   │
-        └───────────────┬────────────────┘
+        ┌──────────────────────────────────────────┐
+        │  AidBlink program                         │
+        │    ├─ Pool PDA      (treasury + totals)   │
+        │    └─ Donation PDAs (one per contribution)│
+        │  Treasury wallet (receives the SOL)       │
+        │  Optional Memo anchor for redemptions     │
+        └───────────────┬──────────────────────────┘
                         │ RPC
 ┌───────────────────────┴────────────────────────────────┐
 │                     Next.js app                         │
@@ -23,7 +28,7 @@ Solana Action (Blink) endpoint for contributions.
 │  wallet.sign & send ──────┘                             │
 │      │                                                  │
 │      ▼                                                  │
-│  /api/donations ── verify on-chain ──► store            │
+│  /api/donations ◄── read Donation PDAs (chain) ─────────┤
 │                                          │              │
 │  /admin ── /api/requests ── approve ──► Voucher ────────┤
 │                                          │  HMAC token  │
@@ -33,6 +38,7 @@ Solana Action (Blink) endpoint for contributions.
 │  /redeem ── /api/redeem ── atomic status change ──► anchor (opt.)
 │                                                         │
 │                  File-backed JSON store                 │
+│          (requests, vouchers, redemptions, demo)        │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -42,16 +48,17 @@ Solana Action (Blink) endpoint for contributions.
 
 1. The page (or any Blink client) calls `POST /api/actions/donate?amount=N`
    with the donor's public key.
-2. The server builds a `SystemProgram.transfer` to the treasury, sets the donor
-   as fee payer and a recent blockhash, and returns it base64-encoded.
-3. The wallet signs and sends it; the client posts the signature to
-   `POST /api/donations`.
-4. The server fetches the parsed transaction, sums the lamports sent to the
-   treasury, and records the contribution (deduplicated by signature).
+2. The server builds an `aidblink::donate` instruction: it records the
+   contribution in a new `Donation` PDA *and* transfers the SOL to the treasury
+   in the same atomic instruction. The donor is the fee payer; a recent blockhash
+   is attached and the transaction is returned base64-encoded.
+3. The wallet signs and sends it.
+4. `GET /api/donations` reads the `Donation` PDAs straight from the program
+   (`getProgramAccounts`), so the "Recent contributions" list is the chain
+   itself — nothing is copied into a database for on-chain entries.
 
-A contribution is never trusted from the client: only transactions the server
-can verify on-chain are recorded as `onchain`. `simulated: true` records are
-explicitly labelled `source: "simulated"`.
+`simulated: true` entries are stored locally and labelled `source: "simulated"`;
+they never count toward the on-chain ledger.
 
 ### 2. Administer (organization)
 
@@ -116,6 +123,8 @@ conditional `UPDATE ... WHERE status = 'issued'`.
 ## Solana integration
 
 - **Cluster:** Devnet by default (`NEXT_PUBLIC_SOLANA_NETWORK`).
+- **Program:** `programs/aidblink` — an Anchor program whose id is
+  `AIDBLINK_PROGRAM_ID` (see the README for build/deploy steps).
 - **Treasury:** a public address; the app needs no private key to receive funds.
 - **Blink spec:** `public/actions.json` routes `/contribute` to
   `/api/actions/donate`; the endpoint sets CORS, `X-Action-Version` and
@@ -123,6 +132,21 @@ conditional `UPDATE ... WHERE status = 'issued'`.
 - **Optional anchor:** if `AIDBLINK_ANCHOR_SECRET_KEY` is configured *and funded*,
   each redemption sends an SPL Memo transaction. Failures never block a
   redemption.
+
+### The AidBlink program
+
+| Item | Value |
+| --- | --- |
+| Instructions | `initialize_pool(treasury)`, `donate(lamports, memo, nonce)` |
+| Pool PDA | seeds `[b"pool"]` — stores authority, treasury, totals |
+| Donation PDA | seeds `[b"donation", donor, nonce]` — stores donor, lamports, index, timestamp, memo |
+| Funds | moved to the treasury wallet by a CPI to the System program, inside `donate` |
+
+The client encodes instructions and decodes accounts itself
+(`src/lib/program.ts`) using Anchor's conventions: discriminator
+`sha256("global:<ix>")[0..8]`, Borsh-encoded args in declaration order, and
+account layout in struct order. This keeps the app dependency-light while the
+account layout stays explicit.
 
 ## Persistence
 
@@ -147,8 +171,8 @@ See the table in `README.md`. Key points:
 | Forged voucher | HMAC signature | Same, with key rotation / KMS |
 | Reused voucher | Atomic status transition | DB transaction / on-chain PDA |
 | Tampered amount | Signature over amount+category | Truly on-chain enforcement |
-| Fake donation recorded | On-chain verification of the signature | Indexer / webhook |
-| Double-counted donation | Dedupe by transaction signature | Unique constraint |
+| Fake donation recorded | `donate` writes the record and moves the funds in one instruction | Indexer / webhook |
+| Double-counted donation | One `Donation` PDA per tx; listing reads accounts, not client input | Unique constraint |
 | Leaked personal data | Pseudonymous refs only | Data-minimization policy |
 | Anonymous staff approval | None | AuthN/AuthZ + audit log |
 

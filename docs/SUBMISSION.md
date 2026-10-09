@@ -1,5 +1,7 @@
 # AidBlink — Submission guide
 
+> 🌐 **Português (BR):** [SUBMISSION.pt-BR.md](./SUBMISSION.pt-BR.md)
+
 Everything needed to publish the project and record the two Colosseum videos.
 
 ## Repository checklist
@@ -9,6 +11,8 @@ Everything needed to publish the project and record the two Colosseum videos.
       real-vs-simulated boundary.
 - [ ] `.env` is **not** committed (`.gitignore` excludes it); `.env.example`
       documents every variable.
+- [ ] The Anchor program (`programs/aidblink`) is included and deploys to the
+      documented Devnet id (`npm run program:deploy`).
 - [ ] `npm install && npm run build` passes from a clean clone.
 - [ ] `node scripts/smoke.mjs` passes against a running server.
 - [x] MIT `LICENSE` file included.
@@ -36,6 +40,14 @@ cp .env.example .env          # set AIDBLINK_TREASURY_ADDRESS
 npm run dev                   # http://localhost:3000
 ```
 
+The contribution list reads from the AidBlink program already deployed to
+Devnet (`AIDBLINK_PROGRAM_ID` in `.env.example`), so judges can contribute with
+no extra setup. To redeploy the program yourself:
+
+```bash
+npm run program:deploy        # anchor build + deploy (devnet) + init pool
+```
+
 Or, with no local Node setup, use Docker:
 
 ```bash
@@ -56,8 +68,9 @@ Then try the flow: `/contribute` → `/admin` → `/voucher/[id]` → `/redeem`
 
 ## What is real vs. simulated (state this in the submission)
 
-- **Real:** Solana Devnet contributions, on-chain verification, treasury balance
-  reads, optional memo anchoring, one-time redemption enforcement.
+- **Real:** Solana Devnet contributions recorded by the AidBlink Anchor program
+  (one `Donation` PDA per contribution), on-chain IDL published, treasury
+  balance reads, optional memo anchoring, one-time redemption enforcement.
 - **Simulated:** USD benefit values, partners, redemption at a real merchant,
   and the vouchers themselves (no monetary value).
 
@@ -67,9 +80,9 @@ Then try the flow: `/contribute` → `/admin` → `/voucher/[id]` → `/redeem`
 | --- | --- |
 | Problem & impact | `README.md`, `docs/PITCH.md` (the donation→aid gap) |
 | Product & execution | Full working flow: contribute → administer → deliver → redeem |
-| Use of Solana / Blinks | Standard Action endpoint, real transfers, optional anchor |
+| Use of Solana / Blinks | Custom Anchor program, standard Action endpoint, real transactions, optional anchor |
 | Originality | One-time voucher mechanism + explicit real/simulated boundary |
-| Technical depth | `docs/ARCHITECTURE.md` (token signing, atomic single-use, threat model) |
+| Technical depth | `docs/ARCHITECTURE.md` (on-chain program, token signing, atomic single-use, threat model) |
 | Feasibility | Small, extensible codebase; clear production roadmap |
 | Presentation | Two focused videos with scripts |
 

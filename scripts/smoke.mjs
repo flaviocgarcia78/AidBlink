@@ -50,9 +50,14 @@ ok("GET action metadata", action.status === 200 && action.data.type === "action"
 const don = await call("POST", "/api/donations", { simulated: true, sol: 0.2 });
 ok("Record simulated donation", don.status === 201 && don.data.donation.sol === 0.2);
 
-// 3. Balance reflects the donation.
+// 3. Balance exposes the ledger (on-chain totals; simulated is not counted).
 const bal = await call("GET", "/api/balance");
-ok("Balance exposes summary", bal.status === 200 && bal.data.summary.raisedUsd > 0);
+ok(
+  "Balance exposes summary",
+  bal.status === 200 &&
+    typeof bal.data.summary?.raisedUsd === "number" &&
+    typeof bal.data.program === "string",
+);
 
 // 4. Create a request.
 const created = await call("POST", "/api/requests", {

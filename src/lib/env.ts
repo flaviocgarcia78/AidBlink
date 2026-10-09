@@ -39,6 +39,14 @@ export const env = {
   /** Illustrative SOL/USD rate used for demo budgeting. */
   solUsdRate: Number(process.env.NEXT_PUBLIC_SOL_USD_RATE ?? "150"),
 
+  /**
+   * AidBlink on-chain program that records contributions. Defaults to the
+   * devnet program shipped in this repo (`programs/aidblink`).
+   */
+  programId:
+    process.env.AIDBLINK_PROGRAM_ID ??
+    "BsNDtwVsmxpMSnnoUiiadhjnRvxJ8huuZWZ5vcrFCrrg",
+
   /** Optional server keypair for on-chain memo anchoring. */
   anchorSecretKey: process.env.AIDBLINK_ANCHOR_SECRET_KEY ?? "",
 

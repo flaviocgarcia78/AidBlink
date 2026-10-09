@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { PublicKey } from "@solana/web3.js";
 import { buildActionGetResponse } from "@/lib/actions";
 import { ApiError, fail, json, withActionsHeaders } from "@/lib/api";
-import { buildContributionTransaction, LAMPORTS_PER_SOL } from "@/lib/solana";
+import { buildDonationTransaction } from "@/lib/program";
+import { getConnection, LAMPORTS_PER_SOL } from "@/lib/solana";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,9 +14,11 @@ export const dynamic = "force-dynamic";
  * GET  /api/actions/donate        -> action metadata
  * POST /api/actions/donate?amount -> unsigned transaction for the wallet
  *
- * A Blink-aware client (e.g. a wallet or https://dial.to) performs the POST and
- * asks the user to sign. The same document powers the in-app /contribute page.
+ * The transaction calls the AidBlink program, which records the contribution
+ * on-chain and transfers the SOL to the treasury in the same instruction.
  */
+
+const DEFAULT_MEMO = "AidBlink contribution";
 
 export async function GET() {
   return withActionsHeaders(json(buildActionGetResponse()));
@@ -30,6 +33,7 @@ export async function POST(req: NextRequest) {
     const body = (await req.json().catch(() => ({}))) as {
       account?: string;
       amount?: number;
+      memo?: string;
     };
 
     const account = body.account;
@@ -50,8 +54,19 @@ export async function POST(req: NextRequest) {
       throw new ApiError("Amount must be between 0.001 and 100 SOL", 400);
     }
 
+    const memoParam = req.nextUrl.searchParams.get("memo") ?? body.memo;
+    const memo =
+      typeof memoParam === "string" && memoParam.trim().length > 0
+        ? memoParam.trim().slice(0, 200)
+        : DEFAULT_MEMO;
+
     const lamports = Math.round(amount * LAMPORTS_PER_SOL);
-    const built = await buildContributionTransaction(donor, lamports);
+    const built = await buildDonationTransaction(
+      getConnection(),
+      donor,
+      lamports,
+      memo,
+    );
 
     return withActionsHeaders(
       json({

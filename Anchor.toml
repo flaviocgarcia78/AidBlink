@@ -1,0 +1,22 @@
+skip_local_validator = true
+
+[toolchain]
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+aidblink = "BsNDtwVsmxpMSnnoUiiadhjnRvxJ8huuZWZ5vcrFCrrg"
+
+[programs.devnet]
+aidblink = "BsNDtwVsmxpMSnnoUiiadhjnRvxJ8huuZWZ5vcrFCrrg"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "cargo test"
+
+[hooks]

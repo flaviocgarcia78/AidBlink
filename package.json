@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "demo": "bash scripts/run.sh",
     "demo:prod": "bash scripts/run.sh --prod",
-    "verify": "bash scripts/run.sh --smoke"
+    "verify": "bash scripts/run.sh --smoke",
+    "program:build": "anchor build",
+    "program:deploy": "bash scripts/deploy-program.sh",
+    "program:init": "node scripts/init-pool.mjs"
   },
   "dependencies": {
     "@solana/wallet-adapter-base": "^0.9.28",

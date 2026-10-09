@@ -1,5 +1,7 @@
 # AidBlink — Product demo script (≤ 3 minutes)
 
+> 🌐 **Português (BR):** [DEMO_SCRIPT.pt-BR.md](./DEMO_SCRIPT.pt-BR.md)
+
 > Colosseum asks for a product demo video of up to 3 minutes, separate from the
 > pitch. This is a **shot-by-shot script** for a single continuous screen
 > recording. Everything below is a real, working flow.
@@ -12,12 +14,18 @@
 ## Pre-flight checklist (before recording)
 
 1. `npm run build && npm start` (or `npm run dev`).
-2. `cp .env.example .env` and set the treasury address; use **Devnet**.
+2. `cp .env.example .env` and set the treasury address; use **Devnet**. The
+   `AIDBLINK_PROGRAM_ID` default is the program already deployed to Devnet by
+   this repo.
 3. Install Phantom, switch it to **Devnet**, fund it with test SOL
    (https://faucet.solana.com).
 4. Open `/admin` once and click **Refresh** to confirm the balance loads.
 5. Have a second browser tab ready with the Solana Explorer.
 6. Decide your demo beneficiary codes (e.g. `BEN-4821`, `BEN-7310`).
+
+> To redeploy or change the program, run `npm run program:deploy` (build +
+> deploy + pool init). The program is already live on Devnet with id
+> `BsNDtwVsmxpMSnnoUiiadhjnRvxJ8huuZWZ5vcrFCrrg`.
 
 > If the wallet is unavailable during recording, use **Record simulated
 > contribution** — the rest of the flow is identical. The demo must be honest:
@@ -49,14 +57,17 @@ Phantom.
 2. Click **Contribute 0.1 SOL**.
 3. Approve in Phantom.
 4. When the success notice appears, open the **View on Solana Explorer** link in
-   the second tab and show the confirmed transfer to the treasury.
+   the second tab and show the confirmed transaction: the `donate` instruction
+   recording the donation account and moving the SOL to the treasury.
 
 **Voice-over:**
 > "The contribution is a real Solana Devnet transaction, signed by the donor's
-> wallet and verifiable on-chain. This same flow is exposed as a standard Solana
-> Blink — a shareable link — so we never force the donor to learn a new app."
+> wallet. Our Anchor program records it on-chain and lists it back from the
+> chain. This same flow is exposed as a standard Solana Blink — a shareable
+> link — so we never force the donor to learn a new app."
 
-Then return to `/contribute` and show **Recent contributions** updating.
+Then return to `/contribute` and show **Recent contributions** updating (the row
+is tagged on-chain and links to the transaction).
 
 ---
 

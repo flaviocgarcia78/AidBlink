@@ -1,5 +1,7 @@
 # AidBlink — Pitch script (2–3 minutes)
 
+> 🌐 **Português (BR):** [PITCH.pt-BR.md](./PITCH.pt-BR.md)
+
 > Colosseum asks for two distinct videos: a 2–3 minute pitch and a product demo
 > of up to 3 minutes. This file is the **pitch**: problem, insight, product,
 > market, why Solana. The demo is in `DEMO_SCRIPT.md`.
@@ -41,20 +43,24 @@ Reveal three words as you speak them: **Contribute · Administer · Deliver.**
 
 ### 1:20–1:55 — The product
 
-> "The supporter contribution is a real Solana transaction, verifiable on-chain.
-> The organization records only a pseudonymous reference — no personal data on
-> the blockchain. When a need is approved, the system issues a signed voucher
-> with a QR code. A partner scans it and the benefit is delivered — exactly once.
-> A second scan is rejected. That single-use rule is what makes a voucher a
-> voucher, not just a picture of a QR code."
+> "The supporter contribution is a real Solana transaction. A small Anchor
+> program records each contribution as its own account on-chain and moves the
+> SOL to the treasury in the same instruction — so the list of contributions is
+> read from the chain, not from our database. The organization records only a
+> pseudonymous reference — no personal data on the blockchain. When a need is
+> approved, the system issues a signed voucher with a QR code. A partner scans
+> it and the benefit is delivered — exactly once. A second scan is rejected.
+> That single-use rule is what makes a voucher a voucher, not just a picture of
+> a QR code."
 
 ### 1:55–2:25 — Why Solana and Blinks
 
 > "Blinks are the perfect entry point: a shareable, wallet-native link means we
 > never have to build a whole blockchain application for the donor. Solana gives
-> us fast, cheap, verifiable transfers, and it lets us anchor each redemption
-> for auditability. And on the receiving side, the person only ever sees a QR
-> code."
+> us fast, cheap, verifiable transfers, and our on-chain program makes every
+> contribution auditable by anyone — the transparency dashboard reads directly
+> from it. It also lets us anchor each redemption for auditability. And on the
+> receiving side, the person only ever sees a QR code."
 
 ### 2:25–2:45 — Ask / close
 

@@ -1,14 +1,16 @@
 # AidBlink — emergency aid in a single link
 
+> 🌐 **Português (BR):** [README.pt-BR.md](./README.pt-BR.md)
+
 AidBlink turns a Solana Blink (a shareable transaction link) into a transparent
 aid pipeline: supporters contribute SOL, an organization allocates the pool to
 real needs, and the person in need receives a **one-time benefit voucher** for
 food or transport — no wallet, no crypto knowledge required on the receiving
 side.
 
-> **Hackathon prototype.** Contributions are real Solana Devnet transactions.
-> Benefit amounts, partners and redemption are simulated. Vouchers have no
-> monetary value.
+> **Hackathon prototype.** Contributions are real Solana Devnet transactions,
+> recorded on-chain by the AidBlink Anchor program. Benefit amounts, partners
+> and redemption are simulated. Vouchers have no monetary value.
 
 ---
 
@@ -37,8 +39,8 @@ chain — beneficiaries are pseudonymous references such as `BEN-4821`.
 
 | Layer | Real (Devnet) | Simulated |
 | --- | --- | --- |
-| Contribute (Blink) | SOL transfer, verifiable on-chain | USD value at a fixed demo rate |
-| Administer | Treasury balance read from the chain | Requests, beneficiary codes, approval |
+| Contribute (Blink) | `donate` instruction records a `Donation` PDA and moves the SOL | USD value at a fixed demo rate |
+| Administer | On-chain contributions + treasury balance read from the chain | Requests, beneficiary codes, approval |
 | Deliver (voucher) | One-time redemption rule; optional on-chain anchor | Partner, redemption, USD benefit |
 
 The one-time rule is **not** a property of the QR code. It is enforced by an
@@ -49,7 +51,9 @@ second redemption is rejected and logged — this is the core of the demo.
 
 - **Next.js 16** (App Router, Turbopack) + **React 19** + **TypeScript**
 - **Tailwind CSS v4**
-- **Solana**: `@solana/web3.js`, wallet-adapter (Phantom), Solana Actions/Blinks
+- **Solana**: an **Anchor program** (`programs/aidblink`) that records
+  contributions, plus `@solana/web3.js`, wallet-adapter (Phantom) and Solana
+  Actions/Blinks
 - `qrcode` for voucher QR codes; a file-backed JSON store (no database needed)
 
 ## Project structure
@@ -74,11 +78,14 @@ src/
       redemptions/               Redemption history + rejected attempts
   lib/
     env.ts        Runtime configuration
-    solana.ts     Connection, transfer building, verification, memo anchor
+    solana.ts     Connection, treasury balance, memo anchor
+    program.ts    AidBlink program client (encode ix, decode accounts)
     voucher.ts    HMAC-signed voucher tokens
     store.ts      File-backed JSON store (swappable)
     aid.ts        Business logic (approve, redeem, summarize)
     actions.ts    Blink metadata helpers
+programs/
+  aidblink/       Anchor program: on-chain contribution ledger
 public/
   actions.json    Blinks action routing
 docs/
@@ -141,6 +148,7 @@ Open:
 | `NEXT_PUBLIC_APP_URL` | Public base URL, used to build links and QR codes |
 | `NEXT_PUBLIC_SOLANA_NETWORK` / `NEXT_PUBLIC_SOLANA_RPC_URL` | Cluster + RPC endpoint |
 | `AIDBLINK_TREASURY_ADDRESS` / `NEXT_PUBLIC_TREASURY_ADDRESS` | Public address that receives contributions |
+| `AIDBLINK_PROGRAM_ID` | Deployed AidBlink program id (defaults to the devnet program in this repo) |
 | `AIDBLINK_VOUCHER_SECRET` | HMAC secret for voucher tokens (server only) |
 | `NEXT_PUBLIC_SOL_USD_RATE` | Illustrative SOL/USD rate for budgeting |
 | `AIDBLINK_ANCHOR_SECRET_KEY` | Optional server keypair to anchor redemptions on-chain |
@@ -157,6 +165,7 @@ npm run demo        # one-command setup + dev server (scripts/run.sh)
 npm run demo:prod   # one-command production build + serve
 npm run verify      # build + end-to-end smoke test
 node scripts/gen-keys.mjs   # generate a treasury + anchor keypair
+node scripts/init-pool.mjs  # create the on-chain pool account after deploy
 node scripts/smoke.mjs      # end-to-end API smoke test (server must be running)
 ```
 
@@ -187,6 +196,39 @@ Notes:
   `docker compose down -v`.
 - Run the built image directly with `docker run --rm -p 3000:3000 --env-file
   .env aidblink:latest`.
+
+## The on-chain program
+
+Contributions are recorded by the Anchor program in `programs/aidblink`
+(devnet id `BsNDtwVsmxpMSnnoUiiadhjnRvxJ8huuZWZ5vcrFCrrg`). A `donate`
+instruction creates a `Donation` PDA **and** moves the SOL to the treasury in
+the same instruction. `GET /api/donations` reads those PDAs back with
+`getProgramAccounts`, so the "Recent contributions" list is the chain itself.
+
+| Item | Value |
+| --- | --- |
+| Instructions | `initialize_pool(treasury)`, `donate(lamports, memo, nonce)` |
+| Pool PDA | `[b"pool"]` — authority, treasury, totals |
+| Donation PDA | `[b"donation", donor, nonce]` — donor, lamports, index, timestamp, memo |
+
+Build and deploy (needs the [Solana CLI](https://solana.com/docs/intro/installation)
+and the [Anchor CLI](https://github.com/coral-xyz/anchor/releases)):
+
+```bash
+anchor build                  # -> target/deploy/aidblink.so
+anchor keys sync              # only if you regenerate the program keypair
+anchor deploy                 # deploys to the cluster in Anchor.toml (devnet)
+node scripts/init-pool.mjs    # creates the [b"pool"] account
+```
+
+The deploy wallet is `~/.config/solana/id.json` and must hold Devnet SOL
+(roughly 1–2 SOL for the program account). Fund it at
+https://faucet.solana.com, or use `solana airdrop 2`.
+
+> **Deploy keypair.** `scripts/deploy-program.sh` restores the program keypair
+> from `keys/aidblink-keypair.json` if `target/deploy/` is missing, so a fresh
+> clone deploys to the same program id. That keypair is the program's **upgrade
+> authority** — it is Devnet-only and must be rotated for production.
 
 ## The Blink (Solana Action)
 

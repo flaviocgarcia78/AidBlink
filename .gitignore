@@ -19,6 +19,12 @@ next-env.d.ts
 .env.local
 .env*.local
 
+# rust / anchor
+/target
+/.anchor
+test-ledger
+**/*.rs.bk
+
 # misc
 .DS_Store
 *.pem

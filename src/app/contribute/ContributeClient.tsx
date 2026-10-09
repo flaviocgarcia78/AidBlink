@@ -96,7 +96,6 @@ export default function ContributeClient() {
       const tx = Transaction.from(base64ToBytes(transaction));
       const signature = await sendTransaction(tx, connection);
       await connection.confirmTransaction(signature, "confirmed");
-      await apiPost("/api/donations", { signature });
       setSuccess(signature);
       await loadDonations();
     } catch (err) {
@@ -274,7 +273,8 @@ export default function ContributeClient() {
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
               The same contribution flow is exposed as a standard Solana Action,
-              so any Blink-compatible client can use it.
+              so any Blink-compatible client can use it. Each contribution is
+              recorded by the AidBlink program on-chain.
             </p>
             <p className="mono mt-3 break-all rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
               GET {actionUrl}
@@ -293,7 +293,7 @@ export default function ContributeClient() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-slate-700">
-                Recent contributions
+                Recent contributions (on-chain)
               </p>
               <IconWallet className="text-slate-300" />
             </div>
@@ -317,7 +317,7 @@ export default function ContributeClient() {
                         {d.source === "onchain" ? "on-chain" : "simulated"}
                       </p>
                     </div>
-                    {d.source === "onchain" ? (
+                    {d.source === "onchain" && d.signature !== d.address ? (
                       <a
                         href={`https://explorer.solana.com/tx/${d.signature}?cluster=${env.network}`}
                         target="_blank"
@@ -326,6 +326,8 @@ export default function ContributeClient() {
                       >
                         tx <IconArrowRight className="h-3.5 w-3.5" />
                       </a>
+                    ) : d.source === "onchain" ? (
+                      <Badge tone="green">on-chain</Badge>
                     ) : (
                       <Badge tone="slate">demo</Badge>
                     )}

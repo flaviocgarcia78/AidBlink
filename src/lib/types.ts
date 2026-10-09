@@ -19,6 +19,8 @@ export interface Donation {
   id: string;
   /** On-chain transaction signature, or a `sim:` id for demo contributions. */
   signature: string;
+  /** On-chain donation account (PDA) address, when read from the program. */
+  address?: string;
   lamports: number;
   sol: number;
   /** USD value at the illustrative demo rate. */
