@@ -1,0 +1,87 @@
+1
+00:00:07,077 --> 00:00:13,263
+Emergency aid often disappears between the donation and the person it should reach.
+
+2
+00:00:13,263 --> 00:00:19,808
+AidBlink closes that loop: real on-chain funding, and benefits that can't be double-spent.
+
+3
+00:00:19,808 --> 00:00:25,201
+Step 1 · Contribute. A supporter opens the Blink and connects a wallet.
+
+4
+00:00:25,201 --> 00:00:29,850
+They pick an amount — here, 0.1 SOL.
+
+5
+00:00:29,850 --> 00:00:35,749
+Connect Phantom. The wallet signs a real Devnet transaction.
+
+6
+00:00:35,749 --> 00:00:42,925
+Approve. A genuine on-chain transfer, not a simulation.
+
+7
+00:00:42,925 --> 00:00:48,627
+Confirmed on-chain. The contribution is now in the aid pool.
+
+8
+00:00:48,627 --> 00:00:54,816
+The explorer shows the signature, the program and the treasury.
+
+9
+00:00:54,816 --> 00:01:00,257
+Step 2 · Administer. The organization signs in to manage the pool.
+
+10
+00:01:00,257 --> 00:01:04,013
+A demo gate with example users.
+
+11
+00:01:04,013 --> 00:01:08,698
+The dashboard reads the aid pool live from the on-chain ledger.
+
+12
+00:01:08,698 --> 00:01:14,091
+Record a pseudonymous request — no personal data, just a reference.
+
+13
+00:01:14,091 --> 00:01:20,507
+Set a small amount and create the request.
+
+14
+00:01:20,507 --> 00:01:24,172
+It's pending. Approving issues a signed voucher.
+
+15
+00:01:24,172 --> 00:01:27,309
+Approved — the voucher is issued.
+
+16
+00:01:27,309 --> 00:01:31,911
+Step 3 · Deliver. The beneficiary gets a QR link.
+
+17
+00:01:31,911 --> 00:01:37,354
+The QR carries a signed token; single use is enforced server-side.
+
+18
+00:01:37,354 --> 00:01:44,289
+The partner terminal is a separate role. Sign in as the partner.
+
+19
+00:01:44,289 --> 00:01:50,034
+The partner verifies the signed token.
+
+20
+00:01:50,034 --> 00:01:52,980
+Redeemed — the voucher is spent.
+
+21
+00:01:52,980 --> 00:01:55,805
+Now try the exact same token again.
+
+22
+00:01:55,805 --> 00:02:01,294
+Rejected. A benefit can only be used once — and the attempt is logged.

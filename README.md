@@ -72,6 +72,7 @@ src/
   app/
     page.tsx                     Landing / problem statement
     contribute/                  Blink + in-app contribution flow
+    blink/                       Built-in Blink client (renders the Action in-app)
     admin/                       Organization dashboard (demo login required)
     login/                       Demo sign in (organization / partner)
     voucher/[id]/                Beneficiary voucher with QR code
@@ -81,6 +82,7 @@ src/
       auth/login/                Demo sign in -> signed session cookie
       auth/logout/               Clear the session
       auth/session/              Current session for the nav
+      demo/reset/                Reset the off-chain demo state (organization only)
       donations/                 List / verify / record contributions
       balance/                   Treasury ledger summary
       requests/                  List / create aid requests
@@ -102,8 +104,14 @@ programs/
   aidblink/       Anchor program: on-chain contribution ledger
 public/
   actions.json    Blinks action routing
+scripts/
+  demo-video.mjs  Product demo recorder (Playwright + narration + music)
+  demo-pitch.mjs  Presentation ("pitch") video generator
+  demo-audio.mjs  TTS narration + generated ambient music + mix/mux
+  edge-tts.py     edge-tts batch helper for the narration
 docs/
   ARCHITECTURE.md, PITCH.md, DEMO_SCRIPT.md, SUBMISSION.md
+  demo/           Rendered demo + pitch videos, subtitles and posters
 Dockerfile, docker-compose.yml, .dockerignore
 LICENSE
 ```
@@ -131,6 +139,8 @@ npm run demo          # ./scripts/run.sh
 npm run demo:prod     # ./scripts/run.sh --prod
 npm run verify        # ./scripts/run.sh --smoke
 npm run demo:stop     # ./scripts/stop.sh
+npm run demo:video    # record the product demo video (English, <=3 min)
+npm run demo:pitch    # record the presentation video (English, 2-3 min)
 ```
 
 The script prints the URL to open. If port 3000 is already taken by another
@@ -179,6 +189,38 @@ page. The session cookie is signed with `AIDBLINK_AUTH_SECRET` (falling back to
 gate cannot be bypassed by calling the API directly. This is a demo gate, not
 production authN — swap it for a real identity provider before shipping.
 
+### Demo videos
+
+Two narrated videos (English, AI voice + soft background music) live in
+`docs/demo/`, matching the Colosseum hackathon requirements:
+
+- **`aidblink-demo.mp4`** — product demo (<=3 min). Shows a real Phantom
+  connection, a **real Devnet donation**, the block explorer for that
+  transaction, the organization dashboard, the voucher and the partner
+  redemption. Subtitles: `aidblink-demo.srt`.
+- **`aidblink-pitch.mp4`** — presentation video (2-3 min). Problem, approach,
+  product proof, why Solana/Blinks, traction, go-to-market and the ask.
+  Subtitles: `aidblink-pitch.srt`.
+
+Regenerate them against a running app (see [Getting started](#getting-started)):
+
+```bash
+npm install --no-save playwright ffmpeg-static
+npx playwright install chromium
+pip install --target .tts edge-tts          # optional narration (edge-tts)
+
+TTS_PYTHONPATH=.tts npm run demo:video       # -> docs/demo/aidblink-demo.mp4
+TTS_PYTHONPATH=.tts npm run demo:pitch       # -> docs/demo/aidblink-pitch.mp4
+```
+
+The product demo performs a **real** 0.1 SOL Devnet donation signed by
+`DEMO_WALLET_KEYPAIR` (defaults to `~/.config/solana/id.json`) and then opens the
+real transaction on `explorer.solana.com`. Useful knobs: `CAPTIONS=pt` for the
+PT-BR demo, `NAME` to rename outputs, `BASE` for a non-default URL,
+`MUSIC_VOLUME` / `TTS_RATE` to tune the mix, and `KEEP_AUDIO=1` to keep the
+intermediate narration/music stems. Without `edge-tts` the videos are silent
+(captions only).
+
 ### Environment variables
 
 | Variable | Purpose |
@@ -206,6 +248,8 @@ npm run typecheck   # tsc --noEmit
 npm run demo        # one-command setup + dev server (scripts/run.sh)
 npm run demo:prod   # one-command production build + serve
 npm run verify      # build + end-to-end smoke test
+npm run demo:video  # record the narrated product demo (needs playwright + ffmpeg)
+npm run demo:pitch  # record the narrated presentation video
 node scripts/gen-keys.mjs   # generate a treasury + anchor keypair
 node scripts/init-pool.mjs  # create the on-chain pool account after deploy
 node scripts/smoke.mjs      # end-to-end API smoke test (server must be running)
@@ -282,7 +326,9 @@ implements the Actions spec:
   unsigned transaction to sign and send
 
 CORS and `X-Action-Version` / `X-Blockchain-Ids` headers are set, so any
-Blink-compatible client can use the link (try it on https://dial.to).
+Blink-compatible client can use the link. The app ships its own client at
+[`/blink`](./src/app/blink) (linked from `/contribute`) that renders the Action
+in-app, so the flow works without any third-party Blink site.
 
 ## Voucher tokens
 

@@ -1,0 +1,87 @@
+1
+00:00:07,807 --> 00:00:13,344
+A ajuda emergencial muitas vezes se perde entre a doação e quem deveria recebê-la.
+
+2
+00:00:13,344 --> 00:00:20,465
+O AidBlink fecha esse ciclo: financiamento real on-chain e benefícios que não podem ser usados duas vezes.
+
+3
+00:00:20,465 --> 00:00:26,002
+Etapa 1 · Contribuir. A pessoa abre o Blink e conecta uma carteira.
+
+4
+00:00:26,002 --> 00:00:30,147
+Ela escolhe um valor — aqui, 0,1 SOL.
+
+5
+00:00:30,147 --> 00:00:36,041
+Conecte a Phantom. A carteira assina uma transação real na Devnet.
+
+6
+00:00:36,041 --> 00:00:43,732
+Aprovar. Uma transferência real on-chain, não uma simulação.
+
+7
+00:00:43,732 --> 00:00:49,034
+Confirmado on-chain. A contribuição já está no fundo de ajuda.
+
+8
+00:00:49,034 --> 00:00:55,223
+O explorer mostra a assinatura, o programa e a tesouraria.
+
+9
+00:00:55,223 --> 00:01:00,736
+Etapa 2 · Administrar. A organização entra para gerir o fundo.
+
+10
+00:01:00,736 --> 00:01:04,504
+Um portão de demonstração com usuários de exemplo.
+
+11
+00:01:04,504 --> 00:01:09,190
+O painel lê o fundo de ajuda ao vivo do registro on-chain.
+
+12
+00:01:09,190 --> 00:01:14,535
+Registre um pedido pseudônimo — sem dados pessoais, só uma referência.
+
+13
+00:01:14,535 --> 00:01:20,968
+Defina um valor pequeno e crie o pedido.
+
+14
+00:01:20,968 --> 00:01:25,306
+Está pendente. Aprovar emite um voucher assinado.
+
+15
+00:01:25,306 --> 00:01:28,491
+Aprovado — o voucher foi emitido.
+
+16
+00:01:28,491 --> 00:01:33,477
+Etapa 3 · Entregar. A pessoa recebe um link com QR.
+
+17
+00:01:33,477 --> 00:01:38,943
+O QR carrega um token assinado; o uso único é garantido no servidor.
+
+18
+00:01:38,943 --> 00:01:45,833
+O terminal do parceiro é outro papel. Entre como parceiro.
+
+19
+00:01:45,833 --> 00:01:51,572
+O parceiro verifica o token assinado.
+
+20
+00:01:51,572 --> 00:01:54,685
+Resgatado — o voucher está gasto.
+
+21
+00:01:54,685 --> 00:01:57,966
+Agora tente o mesmo token outra vez.
+
+22
+00:01:57,966 --> 00:02:04,367
+Rejeitado. Um benefício só pode ser usado uma vez — e a tentativa fica registrada.

@@ -21,10 +21,23 @@ Colosseum.
 
 ## Vídeos (dois arquivos separados)
 
-| Vídeo | Duração | Roteiro |
-| --- | --- | --- |
-| Pitch / apresentação | 2–3 min | `docs/PITCH.pt-BR.md` |
-| Demo do produto | ≤ 3 min | `docs/DEMO_SCRIPT.pt-BR.md` |
+Os dois vídeos já estão gerados em `docs/demo/` (inglês, narração por IA +
+música suave), dentro dos tempos da Colosseum:
+
+| Vídeo | Duração | Arquivo | Roteiro |
+| --- | --- | --- | --- |
+| Pitch / apresentação | 2–3 min | `docs/demo/aidblink-pitch.mp4` | `docs/PITCH.pt-BR.md` |
+| Demo do produto | ≤ 3 min | `docs/demo/aidblink-demo.mp4` | `docs/DEMO_SCRIPT.pt-BR.md` |
+
+Para regerar com a app rodando:
+
+```bash
+npm install --no-save playwright ffmpeg-static
+npx playwright install chromium
+pip install --target .tts edge-tts
+TTS_PYTHONPATH=.tts npm run demo:video   # demo do produto
+TTS_PYTHONPATH=.tts npm run demo:pitch   # vídeo de apresentação
+```
 
 Dicas de gravação:
 

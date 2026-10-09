@@ -23,6 +23,7 @@ import {
   IconCoins,
   IconQr,
   IconShield,
+  IconSpark,
   IconUsers,
   IconWallet,
 } from "@/components/icons";
@@ -129,6 +130,28 @@ export default function AdminClient() {
     }
   }
 
+  async function resetDemo() {
+    if (
+      !window.confirm(
+        "Reset the demo to its initial state? This clears requests, vouchers, redemptions and logged attempts.",
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      await apiPost("/api/demo/reset", {});
+      setMessage("Demo state reset.");
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reset demo");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const summary = balance?.summary;
 
   return (
@@ -138,10 +161,16 @@ export default function AdminClient() {
         title="Organization dashboard"
         description="See the available aid pool, record pseudonymous requests, and approve a food or transport benefit. Approving issues a one-time voucher."
         actions={
-          <Button variant="secondary" onClick={refresh}>
-            <IconBolt />
-            Refresh
-          </Button>
+          <>
+            <Button variant="secondary" onClick={refresh}>
+              <IconBolt />
+              Refresh
+            </Button>
+            <Button variant="secondary" onClick={resetDemo} disabled={busy}>
+              <IconSpark />
+              Reset demo
+            </Button>
+          </>
         }
       />
 

@@ -200,11 +200,27 @@ export async function fetchPool(connection: Connection): Promise<OnchainPool | n
 /**
  * Read every donation recorded by the program, newest first, and resolve the
  * creating transaction signature for the ones we return.
+ *
+ * Results are cached briefly (45s): the demo reads this from several places
+ * (dashboard mount, balance, request approval) and each raw call hits the
+ * Devnet RPC twice per donation, which can take 10-20s on a slow public
+ * endpoint. A short TTL keeps the budget guard coherent while avoiding the
+ * repeated latency.
  */
+const DONATIONS_CACHE_TTL_MS = 30_000;
+let donationsCache: { at: number; data: OnchainDonation[] } | null = null;
+
 export async function fetchOnchainDonations(
   connection: Connection,
   limit = 50,
 ): Promise<OnchainDonation[]> {
+  if (
+    donationsCache &&
+    Date.now() - donationsCache.at < DONATIONS_CACHE_TTL_MS
+  ) {
+    return donationsCache.data;
+  }
+
   const accounts = await connection.getProgramAccounts(getProgramId(), {
     filters: [{ dataSize: DONATION_ACCOUNT_SIZE }],
   });
@@ -234,6 +250,7 @@ export async function fetchOnchainDonations(
     }),
   );
 
+  donationsCache = { at: Date.now(), data: top };
   return top;
 }
 

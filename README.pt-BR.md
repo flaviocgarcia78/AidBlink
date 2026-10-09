@@ -74,6 +74,7 @@ src/
   app/
     page.tsx                     Página inicial / problema
     contribute/                  Blink + fluxo de contribuição no app
+    blink/                       Cliente Blink embutido (renderiza a Action no app)
     admin/                       Painel da organização (requer login demo)
     login/                       Login demo (organização / parceiro)
     voucher/[id]/                Voucher do beneficiário com QR code
@@ -83,6 +84,7 @@ src/
       auth/login/                Login demo -> cookie de sessão assinado
       auth/logout/               Limpa a sessão
       auth/session/              Sessão atual para a navegação
+      demo/reset/                Zera o estado off-chain da demo (só organização)
       donations/                 Listar / verificar / registrar contribuições
       balance/                   Resumo do caixa do tesouro
       requests/                  Listar / criar pedidos de ajuda
@@ -104,9 +106,15 @@ programs/
   aidblink/       Programa Anchor: livro-razão on-chain de contribuições
 public/
   actions.json    Roteamento das ações do Blinks
+scripts/
+  demo-video.mjs  Gravador do vídeo de produto (Playwright + narração + música)
+  demo-pitch.mjs  Gerador do vídeo de apresentação ("pitch")
+  demo-audio.mjs  Narração TTS + música ambiente gerada + mixagem
+  edge-tts.py     Helper de lote do edge-tts para a narração
 docs/
   ARCHITECTURE.md, PITCH.md, DEMO_SCRIPT.md, SUBMISSION.md
   (*.pt-BR.md em português)
+  demo/           Vídeos de demo + pitch renderizados, legendas e posters
 Dockerfile, docker-compose.yml, .dockerignore
 LICENSE
 ```
@@ -134,6 +142,8 @@ npm run demo          # ./scripts/run.sh
 npm run demo:prod     # ./scripts/run.sh --prod
 npm run verify        # ./scripts/run.sh --smoke
 npm run demo:stop     # ./scripts/stop.sh
+npm run demo:video    # grava o vídeo de produto (inglês, <=3 min)
+npm run demo:pitch    # grava o vídeo de apresentação (inglês, 2-3 min)
 ```
 
 O script imprime a URL para abrir. Se a porta 3000 já estiver ocupada por outro
@@ -159,6 +169,7 @@ Abra:
 
 - `/` — problema e visão geral
 - `/contribute` — contribuir com SOL (real) ou registrar uma contribuição simulada
+- `/blink` — cliente Blink embutido que renderiza a Action no app
 - `/login` — login demo (organização ou parceiro)
 - `/admin` — painel da organização (requer a sessão demo da organização)
 - `/redeem` — simulador do parceiro (requer a sessão demo do parceiro)
@@ -182,6 +193,38 @@ página de login. O cookie de sessão é assinado com `AIDBLINK_AUTH_SECRET`
 estado também verificam o papel, então a barreira não pode ser burlada chamando
 a API diretamente. Isto é uma barreira de demonstração, não autenticação de
 produção — troque por um provedor de identidade real antes de publicar.
+
+### Vídeos de demonstração
+
+Dois vídeos narrados (em inglês, voz por IA + música suave de fundo) ficam em
+`docs/demo/`, seguindo os requisitos da hackathon da Colosseum:
+
+- **`aidblink-demo.mp4`** — vídeo de produto (<=3 min). Mostra conexão real da
+  Phantom, uma **doação real na Devnet**, o explorer dessa transação, o painel da
+  organização, o voucher e o resgate pelo parceiro. Legendas:
+  `aidblink-demo.srt`.
+- **`aidblink-pitch.mp4`** — vídeo de apresentação (2-3 min). Problema, abordagem,
+  prova do produto, por que Solana/Blinks, tração, go-to-market e o pedido.
+  Legendas: `aidblink-pitch.srt`.
+
+Para regerar com a app rodando (ver [Começando](#começando)):
+
+```bash
+npm install --no-save playwright ffmpeg-static
+npx playwright install chromium
+pip install --target .tts edge-tts          # narração opcional (edge-tts)
+
+TTS_PYTHONPATH=.tts npm run demo:video       # -> docs/demo/aidblink-demo.mp4
+TTS_PYTHONPATH=.tts npm run demo:pitch       # -> docs/demo/aidblink-pitch.mp4
+```
+
+O vídeo de produto faz uma doação **real** de 0,1 SOL na Devnet assinada por
+`DEMO_WALLET_KEYPAIR` (padrão `~/.config/solana/id.json`) e depois abre a
+transação real em `explorer.solana.com`. Ajustes úteis: `CAPTIONS=pt` para o demo
+em PT-BR, `NAME` para renomear as saídas, `BASE` para outra URL,
+`MUSIC_VOLUME` / `TTS_RATE` para a mixagem e `KEEP_AUDIO=1` para manter as
+trilhas intermediárias de narração/música. Sem o `edge-tts` os vídeos ficam sem
+som (apenas legendas).
 
 ### Variáveis de ambiente
 
@@ -210,6 +253,8 @@ npm run typecheck   # tsc --noEmit
 npm run demo        # setup + servidor de dev em um comando (scripts/run.sh)
 npm run demo:prod   # build + serve de produção em um comando
 npm run verify      # build + teste de fumaça ponta a ponta
+npm run demo:video  # grava o vídeo de produto narrado (precisa de playwright + ffmpeg)
+npm run demo:pitch  # grava o vídeo de apresentação narrado
 npm run program:deploy   # build + deploy do programa on-chain + init do pool
 node scripts/gen-keys.mjs   # gera um keypair de tesouro + âncora
 node scripts/init-pool.mjs  # cria a conta on-chain do pool após o deploy
@@ -289,8 +334,9 @@ implementa a especificação de Actions:
   não assinada em base64 para assinar e enviar
 
 Os cabeçalhos CORS e `X-Action-Version` / `X-Blockchain-Ids` são definidos, então
-qualquer cliente compatível com Blink pode usar o link (teste em
-https://dial.to).
+qualquer cliente compatível com Blink pode usar o link. O app traz o próprio
+cliente em [`/blink`](./src/app/blink) (linkado em `/contribute`), que renderiza a
+Action no app, sem depender de sites de terceiros.
 
 ## Tokens de voucher
 

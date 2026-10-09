@@ -30,13 +30,13 @@ export interface StoreData {
 const DATA_DIR = path.join(process.cwd(), ".data");
 const DATA_FILE = path.join(DATA_DIR, "store.json");
 
-const EMPTY: StoreData = {
+const EMPTY = (): StoreData => ({
   donations: [],
   requests: [],
   vouchers: [],
   redemptions: [],
   attempts: [],
-};
+});
 
 /**
  * Cache on globalThis so hot reloads in dev do not thrash the file.
@@ -53,7 +53,7 @@ function nowIso(): string {
 function seed(): StoreData {
   const sol = 0.1;
   return {
-    ...EMPTY,
+    ...EMPTY(),
     donations: [
       {
         id: `DON-${randomUUID().slice(0, 8)}`,
@@ -98,7 +98,7 @@ async function read(): Promise<StoreData> {
   try {
     const raw = await fs.readFile(DATA_FILE, "utf8");
     const parsed = JSON.parse(raw) as StoreData;
-    const merged: StoreData = { ...EMPTY, ...parsed };
+    const merged: StoreData = { ...EMPTY(), ...parsed };
     globalForStore.__aidblinkStore = merged;
     return merged;
   } catch {
@@ -156,6 +156,20 @@ export async function snapshot(): Promise<StoreData> {
     redemptions: [...data.redemptions],
     attempts: [...data.attempts],
   };
+}
+
+/**
+ * Reset the demo to its seeded state.
+ *
+ * Used by the "Reset demo" button and by the demo-video script so every run
+ * starts from the same clean ledger. On-chain contributions are unaffected —
+ * they are re-read from the program on each request.
+ */
+export async function resetStore(): Promise<StoreData> {
+  const fresh = seed();
+  globalForStore.__aidblinkStore = fresh;
+  await persist(fresh);
+  return fresh;
 }
 
 /* ------------------------------- helpers ------------------------------- */

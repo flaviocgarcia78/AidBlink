@@ -20,10 +20,23 @@ Everything needed to publish the project and record the two Colosseum videos.
 
 ## Videos (two separate files)
 
-| Video | Length | Script |
-| --- | --- | --- |
-| Pitch / presentation | 2–3 min | `docs/PITCH.md` |
-| Product demo | ≤ 3 min | `docs/DEMO_SCRIPT.md` |
+Both videos are already generated in `docs/demo/` (English, AI voice-over +
+soft music), matching the Colosseum lengths:
+
+| Video | Length | File | Script |
+| --- | --- | --- | --- |
+| Pitch / presentation | 2–3 min | `docs/demo/aidblink-pitch.mp4` | `docs/PITCH.md` |
+| Product demo | ≤ 3 min | `docs/demo/aidblink-demo.mp4` | `docs/DEMO_SCRIPT.md` |
+
+Regenerate against a running app:
+
+```bash
+npm install --no-save playwright ffmpeg-static
+npx playwright install chromium
+pip install --target .tts edge-tts
+TTS_PYTHONPATH=.tts npm run demo:video   # product demo
+TTS_PYTHONPATH=.tts npm run demo:pitch   # presentation video
+```
 
 Recording tips:
 

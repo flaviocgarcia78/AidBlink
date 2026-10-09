@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { Transaction } from "@solana/web3.js";
+import Link from "next/link";
 import WalletButton from "@/components/wallet/WalletButton";
 import {
   Badge,
@@ -121,9 +122,6 @@ export default function ContributeClient() {
   }
 
   const actionUrl = `${env.appUrl}/api/actions/donate`;
-  const dialUrl = `https://dial.to/?action=solana-action:${encodeURIComponent(
-    actionUrl,
-  )}`;
 
   return (
     <div className="space-y-8">
@@ -273,21 +271,19 @@ export default function ContributeClient() {
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
               The same contribution flow is exposed as a standard Solana Action,
-              so any Blink-compatible client can use it. Each contribution is
-              recorded by the AidBlink program on-chain.
+              so any Blink-compatible client can use it. Public clients cannot
+              reach a localhost URL, so we also ship a built-in client.
             </p>
             <p className="mono mt-3 break-all rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
               GET {actionUrl}
             </p>
-            <a
-              href={dialUrl}
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              href="/blink"
               className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 hover:underline"
             >
-              Open in a Blink client (dial.to)
-              <IconExternal className="h-3.5 w-3.5" />
-            </a>
+              Open the built-in Blink client
+              <IconArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </Card>
 
           <Card className="p-6">

@@ -6,8 +6,38 @@
 > pitch. This is a **shot-by-shot script** for a single continuous screen
 > recording. Everything below is a real, working flow.
 
-**Target length:** ~2:50 · **Format:** screen recording + voice-over.
+**Target length:** ~2:10 (generated EN 2:08 · PT-BR 2:12) · **Format:** screen recording + voice-over.
 **Resolution:** 1440×900 or larger, browser at 100% zoom.
+**Captions:** short on-screen lines (22 px) at the bottom, synced to the speech.
+
+---
+
+## Automated recording (what we ship)
+
+The submitted videos are generated from a running app with an AI voice-over and
+a soft, royalty-free music bed that is synthesized on the fly. From a running
+app:
+
+```bash
+npm install --no-save playwright ffmpeg-static
+npx playwright install chromium
+pip install --target .tts edge-tts           # optional narration
+
+TTS_PYTHONPATH=.tts npm run demo:video        # product demo (<=3 min)
+TTS_PYTHONPATH=.tts npm run demo:pitch        # presentation video (2-3 min)
+```
+
+The product demo drives the real flow in a recorded browser: it injects a mock
+Phantom provider, connects it through the normal wallet-adapter modal, signs a
+**real 0.1 SOL Devnet donation** from `DEMO_WALLET_KEYPAIR` (default
+`~/.config/solana/id.json`), and then opens the real transaction on
+`explorer.solana.com`. Outputs land in `docs/demo/` (`aidblink-demo.mp4`,
+`.srt`, `-poster.jpg`). It is English by default (`CAPTIONS=pt` for PT-BR). The
+manual shot list below mirrors the same flow if you prefer to record yourself.
+
+To start from a clean slate before a run, sign in at `/login` as the
+organization and click **Reset demo** (or `POST /api/demo/reset`). This only
+clears the off-chain demo data — the on-chain ledger is never touched.
 
 ---
 
@@ -17,7 +47,8 @@
 2. `cp .env.example .env` and set the treasury address; use **Devnet**. The
    `AIDBLINK_PROGRAM_ID` default is the program already deployed to Devnet by
    this repo.
-3. Install Phantom, switch it to **Devnet**, fund it with test SOL
+3. *(Manual path only — the automated recorder injects a mock Phantom.)* Install
+   Phantom, switch it to **Devnet**, fund it with test SOL
    (https://faucet.solana.com).
 4. Sign in at `/login` with the demo organization user
    (`org@aidblink.demo` / `aidblink-org`) and confirm the dashboard loads, then
@@ -37,7 +68,7 @@
 
 ---
 
-## 0:00–0:15 — Frame the problem (landing page)
+## 0:00–0:20 — Frame the problem (landing page)
 
 **Screen:** `/`
 
@@ -51,7 +82,7 @@ Scroll slowly to the *Contribute · Administer · Deliver* cards, then to the
 
 ---
 
-## 0:15–1:00 — Step 1: Contribute (real on-chain)
+## 0:20–0:55 — Step 1: Contribute (real on-chain)
 
 **Screen:** click **Contribute** (`/contribute`) → click **Connect Wallet** → choose
 Phantom.
@@ -75,7 +106,7 @@ is tagged on-chain and links to the transaction).
 
 ---
 
-## 1:00–1:40 — Step 2: Administer (organization dashboard)
+## 0:55–1:25 — Step 2: Administer (organization dashboard)
 
 **Screen:** click **Org dashboard** (`/admin`) → sign in with the demo
 organization user if prompted (`org@aidblink.demo` / `aidblink-org`).
@@ -99,7 +130,7 @@ organization user if prompted (`org@aidblink.demo` / `aidblink-org`).
 
 ---
 
-## 1:40–2:05 — Step 3: Deliver (voucher with QR)
+## 1:25–1:45 — Step 3: Deliver (voucher with QR)
 
 **Screen:** click **Open voucher VCH-…** (`/voucher/[id]`).
 
@@ -115,7 +146,7 @@ organization user if prompted (`org@aidblink.demo` / `aidblink-org`).
 
 ---
 
-## 2:05–2:35 — Partner redemption and the anti-reuse proof
+## 1:45–2:08 — Partner redemption and the anti-reuse proof
 
 **Screen:** click **Open in partner simulator** (`/redeem?token=…`) → sign in
 with the demo partner user if prompted (`parceiro@aidblink.demo` /
@@ -134,19 +165,20 @@ with the demo partner user if prompted (`parceiro@aidblink.demo` /
 > atomically on the server, not by the QR image. That is what makes this a real
 > delivery mechanism."
 
-Optionally, scroll the dashboard to the **Redemptions & rejected attempts** log
-to show the blocked attempt recorded.
+The generated demo ends right after the rejected attempt ("the attempt is
+logged"). If you record it live, you can optionally scroll the dashboard to the
+**Redemptions & rejected attempts** log to show the blocked attempt recorded.
 
 ---
 
-## 2:35–2:50 — Close
+## 1:55–2:08 — Close (end card)
 
-**Screen:** back to `/` or the dashboard.
+**Screen:** the generated demo ends on a title card — *From a contribution
+on-chain… …to a benefit delivered exactly once.* (Recorded live, you can close
+back to `/` instead.)
 
 **Voice-over:**
-> "AidBlink does not confuse a donation on-chain with aid delivered. Contributions
-> are real and transparent; delivery is controlled by the organization; the
-> person in need just gets help. Emergency aid in a single link."
+> "AidBlink. Transparent funding, and aid delivered where it's needed."
 
 ---
 

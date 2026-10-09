@@ -5,6 +5,16 @@
 > A Colosseum pede dois vídeos distintos: um pitch de 2–3 minutos e uma demo de
 > produto de até 3 minutos. Este arquivo é o **pitch**: problema, insight,
 > produto, mercado, por que Solana. A demo está em `DEMO_SCRIPT.pt-BR.md`.
+>
+> O pitch entregue (`docs/demo/aidblink-pitch.mp4`) é gerado por
+> `scripts/demo-pitch.mjs` como um deck narrado, com voz por IA, música e telas
+> reais do produto. Este arquivo também serve como **roteiro para uma versão
+> gravada** caso você prefira se apresentar em câmera; os slides seguem os mesmos
+> momentos.
+>
+> O deck mantém os slides enxutos e mostra uma **legenda curta, frase a frase,
+> na parte de baixo, que avança em sincronia com a narração** — assim as legendas
+> nunca viram um bloco de texto.
 
 **Duração alvo:** ~2:45 · **Tom:** calmo, concreto, humano.
 **Apresentadores:** 1–2. Câmera no apresentador durante o pitch; nenhuma tela

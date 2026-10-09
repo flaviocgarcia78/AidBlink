@@ -1,0 +1,255 @@
+1
+00:00:00,117 --> 00:00:01,892
+This is AidBlink:
+
+2
+00:00:02,330 --> 00:00:04,442
+emergency aid in a single link,
+
+3
+00:00:04,692 --> 00:00:05,680
+built on Solana.
+
+4
+00:00:06,850 --> 00:00:09,763
+Emergency aid breaks down in the last mile.
+
+5
+00:00:10,163 --> 00:00:12,300
+Donors can't see whether their money became
+
+6
+00:00:12,300 --> 00:00:12,975
+real help.
+
+7
+00:00:13,375 --> 00:00:16,563
+Organizations reconcile aid in spreadsheets.
+
+8
+00:00:16,950 --> 00:00:18,975
+The same benefit can be claimed twice.
+
+9
+00:00:19,375 --> 00:00:21,925
+And the people receiving aid should never
+
+10
+00:00:21,925 --> 00:00:23,850
+need a wallet or pay fees.
+
+11
+00:00:25,025 --> 00:00:27,613
+Our approach is to keep crypto exactly
+
+12
+00:00:27,626 --> 00:00:28,638
+where it earns its keep:
+
+13
+00:00:29,075 --> 00:00:31,763
+funding, transparency and auditability.
+
+14
+00:00:32,163 --> 00:00:34,613
+And to keep the human flow simple
+
+15
+00:00:34,626 --> 00:00:35,476
+and wallet-free.
+
+16
+00:00:36,646 --> 00:00:39,096
+A supporter contributes through a Solana Blink.
+
+17
+00:00:39,496 --> 00:00:42,196
+The organization allocates that pool to real,
+
+18
+00:00:42,459 --> 00:00:43,709
+pseudonymous needs.
+
+19
+00:00:44,121 --> 00:00:46,346
+The person in need receives a one-time
+
+20
+00:00:46,346 --> 00:00:49,121
+voucher, with no wallet and no fees,
+
+21
+00:00:49,396 --> 00:00:51,859
+that a partner redeems exactly once.
+
+22
+00:00:53,070 --> 00:00:53,720
+Let me show it.
+
+23
+00:00:54,120 --> 00:00:55,582
+A supporter opens the Blink,
+
+24
+00:00:55,832 --> 00:00:59,270
+connects Phantom, and sends a genuine Devnet transaction.
+
+25
+00:00:59,683 --> 00:01:00,745
+This is not a mock-up:
+
+26
+00:01:01,183 --> 00:01:03,345
+the contribution is confirmed on-chain.
+
+27
+00:01:04,542 --> 00:01:07,367
+The organization dashboard reads the aid pool
+
+28
+00:01:07,367 --> 00:01:08,929
+live from the on-chain ledger:
+
+29
+00:01:09,467 --> 00:01:12,717
+raised, available, allocated and redeemed.
+
+30
+00:01:13,104 --> 00:01:15,642
+A budget guard prevents allocating more than
+
+31
+00:01:15,655 --> 00:01:16,667
+was actually raised.
+
+32
+00:01:17,846 --> 00:01:20,696
+Approving a request issues a signed voucher.
+
+33
+00:01:21,096 --> 00:01:22,596
+The partner verifies it once;
+
+34
+00:01:23,033 --> 00:01:25,108
+a second attempt is rejected and logged.
+
+35
+00:01:25,508 --> 00:01:28,196
+Single use is a server-side state transition,
+
+36
+00:01:28,596 --> 00:01:30,246
+not a property of the QR code.
+
+37
+00:01:31,428 --> 00:01:32,916
+We are explicit about the line.
+
+38
+00:01:33,328 --> 00:01:35,666
+The Anchor program and the contributions are
+
+39
+00:01:35,666 --> 00:01:37,041
+real, on Devnet.
+
+40
+00:01:37,441 --> 00:01:40,828
+Benefit amounts, partners and redemption are simulated.
+
+41
+00:01:41,228 --> 00:01:43,366
+Being honest about what's real is what
+
+42
+00:01:43,378 --> 00:01:44,903
+makes the demo credible.
+
+43
+00:01:46,079 --> 00:01:49,279
+Solana Blinks make distribution unstoppable.
+
+44
+00:01:49,667 --> 00:01:51,754
+A contribution is just a shareable Action
+
+45
+00:01:51,754 --> 00:01:53,454
+link, so any post,
+
+46
+00:01:53,679 --> 00:01:55,842
+message or QR code can become a
+
+47
+00:01:55,854 --> 00:01:56,929
+funding entry point,
+
+48
+00:01:57,217 --> 00:01:59,467
+with any wallet and no app to install.
+
+49
+00:02:00,633 --> 00:02:01,658
+This is not a concept.
+
+50
+00:02:02,071 --> 00:02:03,996
+We already have an Anchor program deployed
+
+51
+00:02:04,108 --> 00:02:05,558
+and verified on Devnet,
+
+52
+00:02:06,008 --> 00:02:07,896
+real donations tested end-to-end,
+
+53
+00:02:08,346 --> 00:02:10,221
+and an open-source repo with a typed
+
+54
+00:02:10,221 --> 00:02:12,008
+client and a public dashboard.
+
+55
+00:02:13,148 --> 00:02:16,436
+Our go-to-market starts with community organizations and
+
+56
+00:02:16,536 --> 00:02:20,398
+NGOs in Brazil that already distribute emergency aid.
+
+57
+00:02:20,798 --> 00:02:23,336
+Their existing channels become the distribution,
+
+58
+00:02:23,761 --> 00:02:25,623
+and the model expands to any cause
+
+59
+00:02:25,623 --> 00:02:26,973
+that pays out benefits.
+
+60
+00:02:28,147 --> 00:02:30,622
+We are applying to Colosseum to pilot
+
+61
+00:02:30,634 --> 00:02:32,147
+with real organizations,
+
+62
+00:02:32,522 --> 00:02:33,859
+harden the on-chain program,
+
+63
+00:02:34,272 --> 00:02:36,384
+and turn AidBlink into the standard way
+
+64
+00:02:36,509 --> 00:02:39,647
+to fund aid transparently on Solana.

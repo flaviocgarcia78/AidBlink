@@ -7,16 +7,25 @@ import WalletButton from "@/components/wallet/WalletButton";
 import { cx } from "@/components/ui";
 import { env } from "@/lib/env";
 
+type Role = "org" | "partner";
+
 interface SessionInfo {
-  role: "org" | "partner";
+  role: Role;
   user: string;
 }
 
-const LINKS = [
+interface NavLink {
+  href: string;
+  label: string;
+  /** Role required to open the page. Other roles see the tab disabled. */
+  role?: Role;
+}
+
+const LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/contribute", label: "Contribute" },
-  { href: "/admin", label: "Org dashboard" },
-  { href: "/redeem", label: "Partner" },
+  { href: "/admin", label: "Org dashboard", role: "org" },
+  { href: "/redeem", label: "Partner", role: "partner" },
 ];
 
 function isActive(pathname: string, href: string): boolean {
@@ -49,6 +58,27 @@ export default function Nav() {
     router.refresh();
   }
 
+  /**
+   * A page that needs a role is a plain link when the role matches, a link to
+   * the sign-in page (pre-selecting the role) when nobody is signed in, and a
+   * disabled tab when a *different* role is signed in.
+   */
+  function linkState(link: NavLink) {
+    const active = isActive(pathname, link.href);
+    const locked = Boolean(link.role && session && session.role !== link.role);
+    const href =
+      link.role && !session
+        ? `/login?next=${encodeURIComponent(link.href)}&role=${link.role}`
+        : link.href;
+    return { active, locked, href };
+  }
+
+  function lockedLabel(link: NavLink): string {
+    return link.role === "org"
+      ? "Sign out to open the organization dashboard"
+      : "Sign out to open the partner terminal";
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-3 py-3 sm:px-6">
@@ -67,16 +97,28 @@ export default function Nav() {
 
         <nav className="hidden items-center gap-1 rounded-2xl border border-slate-200/70 bg-white/60 p-1 md:flex">
           {LINKS.map((link) => {
-            const active = isActive(pathname, link.href);
+            const { active, locked, href } = linkState(link);
+            if (locked) {
+              return (
+                <span
+                  key={link.href}
+                  aria-disabled="true"
+                  title={lockedLabel(link)}
+                  className="cursor-not-allowed rounded-xl px-3.5 py-2 text-sm font-medium text-slate-300"
+                >
+                  {link.label}
+                </span>
+              );
+            }
             return (
               <Link
                 key={link.href}
-                href={link.href}
+                href={href}
                 className={cx(
                   "rounded-xl px-3.5 py-2 text-sm font-medium transition-colors",
                   active
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+                    ? "bg-emerald-600 text-white shadow-sm"
+                    : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-700",
                 )}
               >
                 {link.label}
@@ -116,16 +158,28 @@ export default function Nav() {
 
       <nav className="flex items-center gap-1 overflow-x-auto border-t border-slate-100 px-3 py-2 md:hidden">
         {LINKS.map((link) => {
-          const active = isActive(pathname, link.href);
+          const { active, locked, href } = linkState(link);
+          if (locked) {
+            return (
+              <span
+                key={link.href}
+                aria-disabled="true"
+                title={lockedLabel(link)}
+                className="cursor-not-allowed whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium text-slate-300"
+              >
+                {link.label}
+              </span>
+            );
+          }
           return (
             <Link
               key={link.href}
-              href={link.href}
+              href={href}
               className={cx(
                 "whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                 active
-                  ? "bg-slate-900 text-white"
-                  : "text-slate-600 hover:bg-slate-100",
+                  ? "bg-emerald-600 text-white"
+                  : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-700",
               )}
             >
               {link.label}

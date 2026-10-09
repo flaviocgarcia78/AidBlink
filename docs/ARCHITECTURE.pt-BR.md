@@ -170,7 +170,10 @@ dependências enquanto o layout das contas permanece explícito.
 `src/lib/store.ts` é um store JSON mínimo em arquivo (`.data/store.json`) com um
 mutex de serialização em processo. Ele semeia dados de demonstração na primeira
 execução. A interface (`snapshot`, `update`) é intencionalmente pequena para
-poder ser trocada por Postgres/SQLite sem tocar nas rotas.
+poder ser trocada por Postgres/SQLite sem tocar nas rotas. `resetStore()` (atrás
+do `POST /api/demo/reset`, restrito à organização e exposto como **Reset demo**
+no painel) limpa os dados off-chain da demo para que ela possa ser repetida do
+zero — sem nunca tocar no livro-razão on-chain nem no tesouro.
 
 ## Configuração
 

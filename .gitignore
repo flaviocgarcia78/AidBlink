@@ -33,3 +33,10 @@ yarn-debug.log*
 yarn-error.log*
 .vercel
 *.tsbuildinfo
+
+# demo video intermediates / local TTS install
+docs/demo/.raw*/
+docs/demo/.audio*/
+docs/demo/*.webm
+docs/demo/*.narrated.mp4
+.tts/

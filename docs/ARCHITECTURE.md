@@ -167,7 +167,10 @@ account layout stays explicit.
 `src/lib/store.ts` is a minimal file-backed JSON store (`.data/store.json`)
 with an in-process serialization mutex. It auto-seeds demo data on first run.
 The interface (`snapshot`, `update`) is intentionally small so it can be
-replaced by Postgres/SQLite without touching the routes.
+replaced by Postgres/SQLite without touching the routes. `resetStore()` (behind
+the organization-only `POST /api/demo/reset`, surfaced as **Reset demo** on the
+dashboard) clears the off-chain demo data so a demo can be replayed from a clean
+state — it never touches the on-chain ledger or the treasury.
 
 ## Configuration
 

@@ -6,8 +6,39 @@
 > pitch. Este é um **roteiro plano a plano** para uma única gravação contínua de
 > tela. Tudo abaixo é um fluxo real e funcional.
 
-**Duração alvo:** ~2:50 · **Formato:** gravação de tela + narração.
+**Duração alvo:** ~2:10 (gerada EN 2:08 · PT-BR 2:12) · **Formato:** gravação de tela + narração.
 **Resolução:** 1440×900 ou maior, navegador a 100% de zoom.
+**Legendas:** frases curtas na tela (22 px) na parte de baixo, sincronizadas com a fala.
+
+---
+
+## Gravação automatizada (o que entregamos)
+
+Os vídeos enviados são gerados a partir da app rodando, com narração por IA e
+uma trilha de fundo suave e livre de royalties, sintetizada na hora. Com a app no
+ar:
+
+```bash
+npm install --no-save playwright ffmpeg-static
+npx playwright install chromium
+pip install --target .tts edge-tts           # narração opcional
+
+TTS_PYTHONPATH=.tts npm run demo:video        # demo do produto (<=3 min)
+TTS_PYTHONPATH=.tts npm run demo:pitch        # vídeo de apresentação (2-3 min)
+```
+
+A demo do produto conduz o fluxo real num navegador gravado: injeta uma Phantom
+simulada, conecta pela modal normal do wallet-adapter, assina uma **doação real
+de 0,1 SOL na Devnet** a partir de `DEMO_WALLET_KEYPAIR` (padrão
+`~/.config/solana/id.json`) e depois abre a transação real em
+`explorer.solana.com`. As saídas ficam em `docs/demo/` (`aidblink-demo.mp4`,
+`.srt`, `-poster.jpg`). Por padrão é em inglês (`CAPTIONS=pt` para PT-BR). O
+roteiro manual abaixo reproduz o mesmo fluxo, caso você prefira gravar você
+mesmo.
+
+Para começar do zero antes de uma gravação, entre em `/login` como organização e
+clique em **Reset demo** (ou `POST /api/demo/reset`). Isso limpa apenas os dados
+off-chain da demo — o livro-razão on-chain nunca é tocado.
 
 ---
 
@@ -17,8 +48,9 @@
 2. `cp .env.example .env` e defina o endereço do tesouro; use **Devnet**. O
    padrão de `AIDBLINK_PROGRAM_ID` é o programa já implantado na Devnet por este
    repositório.
-3. Instale a Phantom, mude para **Devnet**, abasteça com SOL de teste
-   (https://faucet.solana.com).
+3. *(Apenas no caminho manual — o gravador automatizado injeta uma Phantom
+   simulada.)* Instale a Phantom, mude para **Devnet**, abasteça com SOL de
+   teste (https://faucet.solana.com).
 4. Faça login em `/login` com o usuário demo da organização
    (`org@aidblink.demo` / `aidblink-org`) e confirme que o painel carrega;
    depois saia.
@@ -37,7 +69,7 @@
 
 ---
 
-## 0:00–0:15 — Enquadre o problema (home)
+## 0:00–0:20 — Enquadre o problema (home)
 
 **Tela:** `/`
 
@@ -52,7 +84,7 @@ a tabela "real vs simulado".
 
 ---
 
-## 0:15–1:00 — Etapa 1: Contribuir (real on-chain)
+## 0:20–0:55 — Etapa 1: Contribuir (real on-chain)
 
 **Tela:** clique em **Contribuir** (`/contribute`) → clique em **Conectar
 carteira** → escolha Phantom.
@@ -77,7 +109,7 @@ atualizadas (a linha fica marcada como on-chain e linka para a transação).
 
 ---
 
-## 1:00–1:40 — Etapa 2: Administrar (painel da organização)
+## 0:55–1:25 — Etapa 2: Administrar (painel da organização)
 
 **Tela:** clique em **Painel da organização** (`/admin`) → faça login com o
 usuário demo da organização se solicitado (`org@aidblink.demo` / `aidblink-org`).
@@ -104,7 +136,7 @@ usuário demo da organização se solicitado (`org@aidblink.demo` / `aidblink-or
 
 ---
 
-## 1:40–2:05 — Etapa 3: Entregar (voucher com QR)
+## 1:25–1:45 — Etapa 3: Entregar (voucher com QR)
 
 **Tela:** clique em **Abrir voucher VCH-…** (`/voucher/[id]`).
 
@@ -121,7 +153,7 @@ usuário demo da organização se solicitado (`org@aidblink.demo` / `aidblink-or
 
 ---
 
-## 2:05–2:35 — Resgate pelo parceiro e a prova anti-reuso
+## 1:45–2:08 — Resgate pelo parceiro e a prova anti-reuso
 
 **Tela:** clique em **Abrir no simulador do parceiro** (`/redeem?token=…`) → faça
 login com o usuário demo do parceiro se solicitado (`parceiro@aidblink.demo` /
@@ -141,20 +173,21 @@ login com o usuário demo do parceiro se solicitado (`parceiro@aidblink.demo` /
 > atômica no servidor, não pela imagem do QR. É isso que faz deste um mecanismo
 > real de entrega."
 
-Opcionalmente, role o painel até o log **Resgates e tentativas rejeitadas** para
-mostrar a tentativa bloqueada registrada.
+A demo gerada termina logo após a tentativa rejeitada ("a tentativa fica
+registrada"). Se você gravar ao vivo, pode opcionalmente rolar o painel até o log
+**Resgates e tentativas rejeitadas** para mostrar a tentativa bloqueada
+registrada.
 
 ---
 
-## 2:35–2:50 — Fechamento
+## 1:55–2:08 — Fechamento (cartão final)
 
-**Tela:** volte para `/` ou para o painel.
+**Tela:** a demo gerada termina em um cartão de título — *De uma contribuição
+on-chain… …a um benefício entregue exatamente uma vez.* (Ao vivo, você pode
+voltar para `/`.)
 
 **Narração:**
-> "O AidBlink não confunde uma doação on-chain com ajuda entregue. As
-> contribuições são reais e transparentes; a entrega é controlada pela
-> organização; a pessoa em necessidade simplesmente recebe ajuda. Ajuda
-> emergencial em um único link."
+> "AidBlink. Financiamento transparente e ajuda entregue onde é necessária."
 
 ---
 

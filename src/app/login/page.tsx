@@ -20,8 +20,22 @@ export default async function LoginPage({
   // Only allow internal, single-slash paths (avoid open redirects).
   const next = /^\/[^/]/.test(rawNext) ? rawNext : "";
 
+  // Which role does `next` require?
+  const requiredRole: "org" | "partner" | null =
+    next === "/admin" || next.startsWith("/admin/")
+      ? "org"
+      : next === "/redeem" || next.startsWith("/redeem/")
+        ? "partner"
+        : null;
+
   if (session) {
-    redirect(next || accountFor(session.role).home);
+    // Honour `next` only when the signed-in role can open it; otherwise go to
+    // the role's own home. This prevents a redirect loop when a signed-in user
+    // opens the other role's page.
+    if (!requiredRole || session.role === requiredRole) {
+      redirect(next || accountFor(session.role).home);
+    }
+    redirect(accountFor(session.role).home);
   }
 
   const initialRole = params.role === "partner" ? "partner" : "org";

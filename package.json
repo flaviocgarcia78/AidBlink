@@ -11,6 +11,8 @@
     "demo": "bash scripts/run.sh",
     "demo:prod": "bash scripts/run.sh --prod",
     "demo:stop": "bash scripts/stop.sh",
+    "demo:video": "node scripts/demo-video.mjs",
+    "demo:pitch": "node scripts/demo-pitch.mjs",
     "verify": "bash scripts/run.sh --smoke",
     "program:build": "anchor build",
     "program:deploy": "bash scripts/deploy-program.sh",
