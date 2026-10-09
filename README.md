@@ -106,6 +106,8 @@ dependencies only when needed, picks a free port and starts the app.
 ./scripts/run.sh --prod         # production build, then serve
 ./scripts/run.sh --smoke        # build + run the end-to-end smoke test, then stop
 ./scripts/run.sh --port 3100    # force a port (default 3000, auto-picks if busy)
+./scripts/stop.sh               # stop the AidBlink web server(s)
+./scripts/stop.sh --validator   # also stop the local solana-test-validator
 ```
 
 Equivalent npm shortcuts:
@@ -114,11 +116,13 @@ Equivalent npm shortcuts:
 npm run demo          # ./scripts/run.sh
 npm run demo:prod     # ./scripts/run.sh --prod
 npm run verify        # ./scripts/run.sh --smoke
+npm run demo:stop     # ./scripts/stop.sh
 ```
 
 The script prints the URL to open. If port 3000 is already taken by another
 process it automatically moves to the next free port (e.g. 3001), so the app
-always comes up.
+always comes up. `scripts/stop.sh` only targets processes whose working
+directory is this repo, so other Node projects keep running.
 
 ### Manual steps
 

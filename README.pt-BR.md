@@ -109,6 +109,8 @@ apenas quando necessário, escolhe uma porta livre e inicia a app.
 ./scripts/run.sh --prod         # build de produção e serve
 ./scripts/run.sh --smoke        # build + teste de fumaça ponta a ponta, e para
 ./scripts/run.sh --port 3100    # força uma porta (padrão 3000, escolhe outra se ocupada)
+./scripts/stop.sh               # para o(s) servidor(es) web do AidBlink
+./scripts/stop.sh --validator   # para também o solana-test-validator local
 ```
 
 Atalhos npm equivalentes:
@@ -117,11 +119,13 @@ Atalhos npm equivalentes:
 npm run demo          # ./scripts/run.sh
 npm run demo:prod     # ./scripts/run.sh --prod
 npm run verify        # ./scripts/run.sh --smoke
+npm run demo:stop     # ./scripts/stop.sh
 ```
 
 O script imprime a URL para abrir. Se a porta 3000 já estiver ocupada por outro
 processo, ele move automaticamente para a próxima porta livre (ex.: 3001), então
-a app sempre sobe.
+a app sempre sobe. O `scripts/stop.sh` age apenas sobre processos cujo diretório
+de trabalho é este repositório, então outros projetos Node continuam rodando.
 
 ### Passos manuais
 

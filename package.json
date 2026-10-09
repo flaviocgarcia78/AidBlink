@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "demo": "bash scripts/run.sh",
     "demo:prod": "bash scripts/run.sh --prod",
+    "demo:stop": "bash scripts/stop.sh",
     "verify": "bash scripts/run.sh --smoke",
     "program:build": "anchor build",
     "program:deploy": "bash scripts/deploy-program.sh",
