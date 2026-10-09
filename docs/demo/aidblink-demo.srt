@@ -1,87 +1,91 @@
 1
-00:00:07,077 --> 00:00:13,263
+00:00:06,534 --> 00:00:12,720
 Emergency aid often disappears between the donation and the person it should reach.
 
 2
-00:00:13,263 --> 00:00:19,808
+00:00:12,720 --> 00:00:19,264
 AidBlink closes that loop: real on-chain funding, and benefits that can't be double-spent.
 
 3
-00:00:19,808 --> 00:00:25,201
+00:00:19,264 --> 00:00:24,658
 Step 1 · Contribute. A supporter opens the Blink and connects a wallet.
 
 4
-00:00:25,201 --> 00:00:29,850
+00:00:24,658 --> 00:00:29,308
 They pick an amount — here, 0.1 SOL.
 
 5
-00:00:29,850 --> 00:00:35,749
+00:00:29,308 --> 00:00:35,209
 Connect Phantom. The wallet signs a real Devnet transaction.
 
 6
-00:00:35,749 --> 00:00:42,925
+00:00:35,209 --> 00:00:41,888
 Approve. A genuine on-chain transfer, not a simulation.
 
 7
-00:00:42,925 --> 00:00:48,627
+00:00:41,888 --> 00:00:47,136
 Confirmed on-chain. The contribution is now in the aid pool.
 
 8
-00:00:48,627 --> 00:00:54,816
+00:00:47,136 --> 00:00:53,457
 The explorer shows the signature, the program and the treasury.
 
 9
-00:00:54,816 --> 00:01:00,257
-Step 2 · Administer. The organization signs in to manage the pool.
+00:00:53,457 --> 00:01:01,829
+It's a standard Solana Blink — one shareable link any Blink client can render, so donating never requires a new app.
 
 10
-00:01:00,257 --> 00:01:04,013
-A demo gate with example users.
+00:01:01,829 --> 00:01:07,271
+Step 2 · Administer. The organization signs in to manage the pool.
 
 11
-00:01:04,013 --> 00:01:08,698
-The dashboard reads the aid pool live from the on-chain ledger.
+00:01:07,271 --> 00:01:11,039
+A demo gate with example users.
 
 12
-00:01:08,698 --> 00:01:14,091
-Record a pseudonymous request — no personal data, just a reference.
+00:01:11,039 --> 00:01:15,706
+The dashboard reads the aid pool live from the on-chain ledger.
 
 13
-00:01:14,091 --> 00:01:20,507
-Set a small amount and create the request.
+00:01:15,706 --> 00:01:21,099
+Record a pseudonymous request — no personal data, just a reference.
 
 14
-00:01:20,507 --> 00:01:24,172
-It's pending. Approving issues a signed voucher.
+00:01:21,099 --> 00:01:27,560
+Set a small amount and create the request.
 
 15
-00:01:24,172 --> 00:01:27,309
-Approved — the voucher is issued.
+00:01:27,560 --> 00:01:31,224
+It's pending. Approving issues a signed voucher.
 
 16
-00:01:27,309 --> 00:01:31,911
-Step 3 · Deliver. The beneficiary gets a QR link.
+00:01:31,224 --> 00:01:34,361
+Approved — the voucher is issued.
 
 17
-00:01:31,911 --> 00:01:37,354
-The QR carries a signed token; single use is enforced server-side.
+00:01:34,361 --> 00:01:38,962
+Step 3 · Deliver. The beneficiary gets a QR link.
 
 18
-00:01:37,354 --> 00:01:44,289
-The partner terminal is a separate role. Sign in as the partner.
+00:01:38,962 --> 00:01:44,406
+The QR carries a signed token; single use is enforced server-side.
 
 19
-00:01:44,289 --> 00:01:50,034
-The partner verifies the signed token.
+00:01:44,406 --> 00:01:51,325
+The partner terminal is a separate role. Sign in as the partner.
 
 20
-00:01:50,034 --> 00:01:52,980
-Redeemed — the voucher is spent.
+00:01:51,325 --> 00:01:57,076
+The partner verifies the signed token.
 
 21
-00:01:52,980 --> 00:01:55,805
-Now try the exact same token again.
+00:01:57,076 --> 00:02:00,022
+Redeemed — the voucher is spent.
 
 22
-00:01:55,805 --> 00:02:01,294
+00:02:00,022 --> 00:02:02,848
+Now try the exact same token again.
+
+23
+00:02:02,848 --> 00:02:08,336
 Rejected. A benefit can only be used once — and the attempt is logged.

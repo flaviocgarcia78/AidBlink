@@ -6,7 +6,7 @@
 > pitch. This is a **shot-by-shot script** for a single continuous screen
 > recording. Everything below is a real, working flow.
 
-**Target length:** ~2:10 (generated EN 2:08 · PT-BR 2:12) · **Format:** screen recording + voice-over.
+**Target length:** ~2:16 (generated EN 2:15 · PT-BR 2:18) · **Format:** screen recording + voice-over.
 **Resolution:** 1440×900 or larger, browser at 100% zoom.
 **Captions:** short on-screen lines (22 px) at the bottom, synced to the speech.
 
@@ -106,7 +106,22 @@ is tagged on-chain and links to the transaction).
 
 ---
 
-## 0:55–1:25 — Step 2: Administer (organization dashboard)
+## 0:53–1:02 — The same donation as a Solana Blink
+
+**Screen:** back in the app, open the **built-in Blink client** (`/blink`).
+
+**Actions:**
+1. Show that this page consumes the same Solana Action
+   (`GET /api/actions/donate`) exposed as a shareable link.
+2. Point to the **Quick amounts** presets and the custom amount field.
+
+**Voice-over:**
+> "It's a standard Solana Blink — one shareable link any Blink client can render,
+> so donating never requires a new app."
+
+---
+
+## 1:02–1:34 — Step 2: Administer (organization dashboard)
 
 **Screen:** click **Org dashboard** (`/admin`) → sign in with the demo
 organization user if prompted (`org@aidblink.demo` / `aidblink-org`).
@@ -130,7 +145,7 @@ organization user if prompted (`org@aidblink.demo` / `aidblink-org`).
 
 ---
 
-## 1:25–1:45 — Step 3: Deliver (voucher with QR)
+## 1:34–1:44 — Step 3: Deliver (voucher with QR)
 
 **Screen:** click **Open voucher VCH-…** (`/voucher/[id]`).
 
@@ -146,7 +161,7 @@ organization user if prompted (`org@aidblink.demo` / `aidblink-org`).
 
 ---
 
-## 1:45–2:08 — Partner redemption and the anti-reuse proof
+## 1:44–2:08 — Partner redemption and the anti-reuse proof
 
 **Screen:** click **Open in partner simulator** (`/redeem?token=…`) → sign in
 with the demo partner user if prompted (`parceiro@aidblink.demo` /
@@ -171,7 +186,7 @@ logged"). If you record it live, you can optionally scroll the dashboard to the
 
 ---
 
-## 1:55–2:08 — Close (end card)
+## 2:05–2:15 — Close (end card)
 
 **Screen:** the generated demo ends on a title card — *From a contribution
 on-chain… …to a benefit delivered exactly once.* (Recorded live, you can close

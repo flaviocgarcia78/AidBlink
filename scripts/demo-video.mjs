@@ -277,7 +277,7 @@ const CAPTIONS = {
     contribute6: "Confirmed on-chain. The contribution is now in the aid pool.",
     explorer2: "The explorer shows the signature, the program and the treasury.",
     blink2:
-      "It's a standard Solana Blink — a shareable transaction link, rendered in our own client.",
+      "It's a standard Solana Blink — one shareable link any Blink client can render, so donating never requires a new app.",
     login1: "Step 2 · Administer. The organization signs in to manage the pool.",
     login2: "A demo gate with example users.",
     admin1: "The dashboard reads the aid pool live from the on-chain ledger.",
@@ -316,7 +316,7 @@ const CAPTIONS = {
     contribute6: "Confirmado on-chain. A contribuição já está no fundo de ajuda.",
     explorer2: "O explorer mostra a assinatura, o programa e a tesouraria.",
     blink2:
-      "É um Blink padrão da Solana — um link de transação, renderizado no nosso próprio cliente.",
+      "É um Blink padrão da Solana — um link compartilhável que qualquer cliente Blink consegue renderizar, então doar não exige um app novo.",
     login1: "Etapa 2 · Administrar. A organização entra para gerir o fundo.",
     login2: "Um portão de demonstração com usuários de exemplo.",
     admin1: "O painel lê o fundo de ajuda ao vivo do registro on-chain.",
@@ -783,7 +783,21 @@ try {
   await page.evaluate(() => window.scrollBy(0, 760));
   await hold(page, 2.2);
 
-  // Back to the app (the built-in Blink client is showcased in the pitch).
+  // Back to the app: the same donation is exposed as a standard Solana Blink.
+  await go(page, "/blink", "text=Built-in Blink client");
+  await page
+    .locator("text=Quick amounts")
+    .first()
+    .waitFor({ state: "visible", timeout: 20000 });
+  await say(page, "Blink · Solana Action", C.blink2);
+  await act(page, page.locator("text=Quick amounts").first(), {
+    badge: "Blink · Solana Action",
+    click: false,
+    seconds: 1.6,
+  });
+  await hold(page, 1.8);
+
+  // Back to the contribute page for the next step.
   await go(page, "/contribute", "text=Choose an amount");
 
   /* --- Organization login --- */

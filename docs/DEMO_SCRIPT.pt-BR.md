@@ -6,7 +6,7 @@
 > pitch. Este é um **roteiro plano a plano** para uma única gravação contínua de
 > tela. Tudo abaixo é um fluxo real e funcional.
 
-**Duração alvo:** ~2:10 (gerada EN 2:08 · PT-BR 2:12) · **Formato:** gravação de tela + narração.
+**Duração alvo:** ~2:16 (gerada EN 2:15 · PT-BR 2:18) · **Formato:** gravação de tela + narração.
 **Resolução:** 1440×900 ou maior, navegador a 100% de zoom.
 **Legendas:** frases curtas na tela (22 px) na parte de baixo, sincronizadas com a fala.
 
@@ -109,7 +109,22 @@ atualizadas (a linha fica marcada como on-chain e linka para a transação).
 
 ---
 
-## 0:55–1:25 — Etapa 2: Administrar (painel da organização)
+## 0:53–1:02 — A mesma doação como um Solana Blink
+
+**Tela:** de volta ao app, abra o **cliente Blink embutido** (`/blink`).
+
+**Ações:**
+1. Mostre que a página consome a mesma Solana Action
+   (`GET /api/actions/donate`) exposta como um link compartilhável.
+2. Aponte os atalhos de **valores rápidos** e o campo de valor personalizado.
+
+**Narração:**
+> "É um Blink padrão da Solana — um link compartilhável que qualquer cliente
+> Blink consegue renderizar, então doar não exige um app novo."
+
+---
+
+## 1:02–1:34 — Etapa 2: Administrar (painel da organização)
 
 **Tela:** clique em **Painel da organização** (`/admin`) → faça login com o
 usuário demo da organização se solicitado (`org@aidblink.demo` / `aidblink-org`).
@@ -136,7 +151,7 @@ usuário demo da organização se solicitado (`org@aidblink.demo` / `aidblink-or
 
 ---
 
-## 1:25–1:45 — Etapa 3: Entregar (voucher com QR)
+## 1:34–1:44 — Etapa 3: Entregar (voucher com QR)
 
 **Tela:** clique em **Abrir voucher VCH-…** (`/voucher/[id]`).
 
@@ -153,7 +168,7 @@ usuário demo da organização se solicitado (`org@aidblink.demo` / `aidblink-or
 
 ---
 
-## 1:45–2:08 — Resgate pelo parceiro e a prova anti-reuso
+## 1:44–2:08 — Resgate pelo parceiro e a prova anti-reuso
 
 **Tela:** clique em **Abrir no simulador do parceiro** (`/redeem?token=…`) → faça
 login com o usuário demo do parceiro se solicitado (`parceiro@aidblink.demo` /
@@ -180,7 +195,7 @@ registrada.
 
 ---
 
-## 1:55–2:08 — Fechamento (cartão final)
+## 2:05–2:15 — Fechamento (cartão final)
 
 **Tela:** a demo gerada termina em um cartão de título — *De uma contribuição
 on-chain… …a um benefício entregue exatamente uma vez.* (Ao vivo, você pode

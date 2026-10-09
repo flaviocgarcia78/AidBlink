@@ -1,87 +1,91 @@
 1
-00:00:07,807 --> 00:00:13,344
+00:00:07,329 --> 00:00:12,867
 A ajuda emergencial muitas vezes se perde entre a doação e quem deveria recebê-la.
 
 2
-00:00:13,344 --> 00:00:20,465
+00:00:12,867 --> 00:00:19,989
 O AidBlink fecha esse ciclo: financiamento real on-chain e benefícios que não podem ser usados duas vezes.
 
 3
-00:00:20,465 --> 00:00:26,002
+00:00:19,989 --> 00:00:25,526
 Etapa 1 · Contribuir. A pessoa abre o Blink e conecta uma carteira.
 
 4
-00:00:26,002 --> 00:00:30,147
+00:00:25,526 --> 00:00:29,672
 Ela escolhe um valor — aqui, 0,1 SOL.
 
 5
-00:00:30,147 --> 00:00:36,041
+00:00:29,672 --> 00:00:35,578
 Conecte a Phantom. A carteira assina uma transação real na Devnet.
 
 6
-00:00:36,041 --> 00:00:43,732
+00:00:35,578 --> 00:00:41,754
 Aprovar. Uma transferência real on-chain, não uma simulação.
 
 7
-00:00:43,732 --> 00:00:49,034
+00:00:41,754 --> 00:00:46,931
 Confirmado on-chain. A contribuição já está no fundo de ajuda.
 
 8
-00:00:49,034 --> 00:00:55,223
+00:00:46,931 --> 00:00:52,770
 O explorer mostra a assinatura, o programa e a tesouraria.
 
 9
-00:00:55,223 --> 00:01:00,736
-Etapa 2 · Administrar. A organização entra para gerir o fundo.
+00:00:52,770 --> 00:01:01,403
+É um Blink padrão da Solana — um link compartilhável que qualquer cliente Blink consegue renderizar, então doar não exige um app novo.
 
 10
-00:01:00,736 --> 00:01:04,504
-Um portão de demonstração com usuários de exemplo.
+00:01:01,403 --> 00:01:06,916
+Etapa 2 · Administrar. A organização entra para gerir o fundo.
 
 11
-00:01:04,504 --> 00:01:09,190
-O painel lê o fundo de ajuda ao vivo do registro on-chain.
+00:01:06,916 --> 00:01:10,672
+Um portão de demonstração com usuários de exemplo.
 
 12
-00:01:09,190 --> 00:01:14,535
-Registre um pedido pseudônimo — sem dados pessoais, só uma referência.
+00:01:10,672 --> 00:01:15,362
+O painel lê o fundo de ajuda ao vivo do registro on-chain.
 
 13
-00:01:14,535 --> 00:01:20,968
-Defina um valor pequeno e crie o pedido.
+00:01:15,362 --> 00:01:20,708
+Registre um pedido pseudônimo — sem dados pessoais, só uma referência.
 
 14
-00:01:20,968 --> 00:01:25,306
-Está pendente. Aprovar emite um voucher assinado.
+00:01:20,708 --> 00:01:27,123
+Defina um valor pequeno e crie o pedido.
 
 15
-00:01:25,306 --> 00:01:28,491
-Aprovado — o voucher foi emitido.
+00:01:27,123 --> 00:01:31,460
+Está pendente. Aprovar emite um voucher assinado.
 
 16
-00:01:28,491 --> 00:01:33,477
-Etapa 3 · Entregar. A pessoa recebe um link com QR.
+00:01:31,460 --> 00:01:34,645
+Aprovado — o voucher foi emitido.
 
 17
-00:01:33,477 --> 00:01:38,943
-O QR carrega um token assinado; o uso único é garantido no servidor.
+00:01:34,645 --> 00:01:39,631
+Etapa 3 · Entregar. A pessoa recebe um link com QR.
 
 18
-00:01:38,943 --> 00:01:45,833
-O terminal do parceiro é outro papel. Entre como parceiro.
+00:01:39,631 --> 00:01:45,098
+O QR carrega um token assinado; o uso único é garantido no servidor.
 
 19
-00:01:45,833 --> 00:01:51,572
-O parceiro verifica o token assinado.
+00:01:45,098 --> 00:01:52,021
+O terminal do parceiro é outro papel. Entre como parceiro.
 
 20
-00:01:51,572 --> 00:01:54,685
-Resgatado — o voucher está gasto.
+00:01:52,021 --> 00:01:57,274
+O parceiro verifica o token assinado.
 
 21
-00:01:54,685 --> 00:01:57,966
-Agora tente o mesmo token outra vez.
+00:01:57,274 --> 00:02:00,388
+Resgatado — o voucher está gasto.
 
 22
-00:01:57,966 --> 00:02:04,367
+00:02:00,388 --> 00:02:03,670
+Agora tente o mesmo token outra vez.
+
+23
+00:02:03,670 --> 00:02:10,071
 Rejeitado. Um benefício só pode ser usado uma vez — e a tentativa fica registrada.
