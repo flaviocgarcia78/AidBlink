@@ -66,7 +66,7 @@ stop_pids() {
 }
 
 mapfile -t WEB < <(
-  { collect 'scripts/run.sh'; collect 'next start'; collect 'next-server'; } | sort -un
+  { collect 'scripts/run.sh'; collect 'next start'; collect 'next-server'; collect 'npm run start'; } | sort -un
 )
 stop_pids "AidBlink web server(s)" "${WEB[@]}"
 

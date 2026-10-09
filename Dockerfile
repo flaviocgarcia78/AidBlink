@@ -16,7 +16,8 @@ RUN npm ci
 # -------------------------------- builder ---------------------------------
 FROM node:22-alpine AS builder
 WORKDIR /app
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    BUILD_STANDALONE=1
 
 ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
 ARG NEXT_PUBLIC_SOLANA_NETWORK=devnet
