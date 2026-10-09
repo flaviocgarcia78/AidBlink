@@ -89,6 +89,32 @@ LICENSE
 
 ## Getting started
 
+### One command (recommended)
+
+`scripts/run.sh` does everything: creates `.env` if missing, installs
+dependencies only when needed, picks a free port and starts the app.
+
+```bash
+./scripts/run.sh                # dev server (installs if needed)
+./scripts/run.sh --prod         # production build, then serve
+./scripts/run.sh --smoke        # build + run the end-to-end smoke test, then stop
+./scripts/run.sh --port 3100    # force a port (default 3000, auto-picks if busy)
+```
+
+Equivalent npm shortcuts:
+
+```bash
+npm run demo          # ./scripts/run.sh
+npm run demo:prod     # ./scripts/run.sh --prod
+npm run verify        # ./scripts/run.sh --smoke
+```
+
+The script prints the URL to open. If port 3000 is already taken by another
+process it automatically moves to the next free port (e.g. 3001), so the app
+always comes up.
+
+### Manual steps
+
 ```bash
 # 1. Install
 npm install
@@ -127,8 +153,11 @@ npm run dev         # development server
 npm run build       # production build
 npm run start       # serve the production build
 npm run typecheck   # tsc --noEmit
+npm run demo        # one-command setup + dev server (scripts/run.sh)
+npm run demo:prod   # one-command production build + serve
+npm run verify      # build + end-to-end smoke test
 node scripts/gen-keys.mjs   # generate a treasury + anchor keypair
-node scripts/smoke.mjs      # end-to-end API smoke test
+node scripts/smoke.mjs      # end-to-end API smoke test (server must be running)
 ```
 
 ## Running with Docker

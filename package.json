@@ -7,7 +7,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "demo": "bash scripts/run.sh",
+    "demo:prod": "bash scripts/run.sh --prod",
+    "verify": "bash scripts/run.sh --smoke"
   },
   "dependencies": {
     "@solana/wallet-adapter-base": "^0.9.28",
