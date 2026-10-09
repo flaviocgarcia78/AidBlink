@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --brand: #059669;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  color: var(--ink);
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 100% -10%, #d1fae5 0%, transparent 55%),
+    radial-gradient(900px 520px at -10% 5%, #dbeafe 0%, transparent 50%),
+    #f6f8fb;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+/* Wallet adapter button tuned to the AidBlink palette. */
+.wallet-adapter-button-trigger {
+  background-color: var(--brand) !important;
+  border-radius: 0.75rem !important;
+  height: 42px !important;
+  font-size: 0.9rem !important;
+  padding: 0 1rem !important;
+}
+
+.wallet-adapter-button-trigger:not([disabled]):hover {
+  background-color: #047857 !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background: #0f172a !important;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
