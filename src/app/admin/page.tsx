@@ -4,13 +4,28 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Badge,
+  Button,
   Card,
   CategoryPill,
+  cx,
+  Field,
+  Input,
   Notice,
+  PageHeader,
   RequestStatusBadge,
   Stat,
   VoucherStatusBadge,
 } from "@/components/ui";
+import {
+  IconBolt,
+  IconBuilding,
+  IconCheck,
+  IconCoins,
+  IconQr,
+  IconShield,
+  IconUsers,
+  IconWallet,
+} from "@/components/icons";
 import { apiGet, apiPost } from "@/lib/client";
 import { SUGGESTED_AMOUNTS, formatDateTime, formatSol, formatUsd } from "@/lib/money";
 import type {
@@ -118,43 +133,41 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-3">
-          <Badge tone="green">Step 2 · Administer</Badge>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-            Organization dashboard
-          </h1>
-          <p className="max-w-2xl text-slate-600">
-            See the available aid pool, record pseudonymous requests, and approve
-            a food or transport benefit. Approving issues a one-time voucher.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={refresh}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-        >
-          Refresh
-        </button>
-      </header>
+      <PageHeader
+        eyebrow="Step 2 · Administer"
+        title="Organization dashboard"
+        description="See the available aid pool, record pseudonymous requests, and approve a food or transport benefit. Approving issues a one-time voucher."
+        actions={
+          <Button variant="secondary" onClick={refresh}>
+            <IconBolt />
+            Refresh
+          </Button>
+        }
+      />
 
       {error ? <Notice tone="red">{error}</Notice> : null}
       {message ? <Notice tone="green">{message}</Notice> : null}
 
-      {/* Stats */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
           label="Raised"
+          icon={<IconCoins />}
           value={summary ? formatUsd(summary.raisedUsd) : "—"}
-          hint={summary ? `${summary.raisedSol} SOL · ${summary.donationCount} contributions` : undefined}
+          hint={
+            summary
+              ? `${summary.raisedSol} SOL · ${summary.donationCount} contributions`
+              : undefined
+          }
         />
         <Stat
           label="Available"
+          icon={<IconWallet />}
           value={summary ? formatUsd(summary.availableUsd) : "—"}
           hint="Raised minus allocated benefits"
         />
         <Stat
           label="Allocated"
+          icon={<IconShield />}
           value={summary ? formatUsd(summary.allocatedUsd) : "—"}
           hint={
             summary
@@ -164,56 +177,60 @@ export default function AdminPage() {
         />
         <Stat
           label="Redeemed"
+          icon={<IconCheck />}
           value={summary ? formatUsd(summary.redeemedUsd) : "—"}
           hint={summary ? `${summary.voucherRedeemed} vouchers redeemed` : undefined}
         />
       </section>
 
       {balance ? (
-        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-          <span>
-            On-chain treasury balance:{" "}
+        <Card className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 text-xs text-slate-500">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Treasury{" "}
             <span className="mono font-semibold text-slate-700">
               {balance.onchainBalanceSol ?? "unavailable"} SOL
             </span>
           </span>
           <span className="text-slate-300">|</span>
           <span>
-            Network: <span className="font-semibold">{balance.network}</span>
+            Network <span className="font-semibold text-slate-700">{balance.network}</span>
           </span>
           <span className="text-slate-300">|</span>
           <span>
-            On-chain anchoring:{" "}
-            <span className="font-semibold">
+            On-chain anchoring{" "}
+            <span className="font-semibold text-slate-700">
               {balance.anchoringEnabled ? "enabled" : "disabled"}
             </span>
           </span>
-          <span className="text-slate-300">|</span>
-          <span className="mono">{balance.treasury}</span>
-        </div>
+          <span className="hidden text-slate-300 sm:inline">|</span>
+          <span className="mono hidden sm:inline">{balance.treasury}</span>
+        </Card>
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         {/* New request */}
-        <Card className="p-6">
-          <h2 className="text-lg font-bold text-slate-900">New aid request</h2>
-          <p className="mt-1 text-sm text-slate-500">
+        <Card className="p-6 sm:p-7">
+          <div className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-white">
+              <IconBuilding />
+            </span>
+            <h2 className="text-lg font-bold text-slate-900">New aid request</h2>
+          </div>
+          <p className="mt-2 text-sm text-slate-500">
             Use a pseudonymous reference only. Never enter personal data.
           </p>
 
-          <div className="mt-4 space-y-4">
-            <label className="block text-sm font-medium text-slate-600">
-              Beneficiary reference
-              <input
-                value={ref}
-                onChange={(e) => setRef(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-slate-900 outline-none focus:border-emerald-500"
-              />
-            </label>
+          <div className="mt-5 space-y-4">
+            <Field label="Beneficiary reference">
+              <Input value={ref} onChange={(e) => setRef(e.target.value)} />
+            </Field>
 
             <div>
-              <p className="text-sm font-medium text-slate-600">Category</p>
-              <div className="mt-2 grid grid-cols-2 gap-3">
+              <p className="mb-2 block text-sm font-medium text-slate-700">
+                Category
+              </p>
+              <div className="grid grid-cols-2 gap-3">
                 {(["food", "transport"] as AidCategory[]).map((c) => (
                   <button
                     key={c}
@@ -222,11 +239,12 @@ export default function AdminPage() {
                       setCategory(c);
                       setAmountUsd(SUGGESTED_AMOUNTS[c][1]);
                     }}
-                    className={`rounded-xl border px-3 py-2.5 text-sm font-semibold transition ${
+                    className={cx(
+                      "rounded-xl border px-3 py-2.5 text-sm font-semibold transition",
                       category === c
-                        ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                        : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
-                    }`}
+                        ? "border-emerald-500 bg-emerald-50 text-emerald-700 ring-1 ring-emerald-500"
+                        : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50",
+                    )}
                   >
                     {CATEGORY_LABELS[c]}
                   </button>
@@ -235,57 +253,63 @@ export default function AdminPage() {
             </div>
 
             <div>
-              <p className="text-sm font-medium text-slate-600">Amount (USD)</p>
-              <div className="mt-2 flex flex-wrap gap-2">
+              <p className="mb-2 block text-sm font-medium text-slate-700">
+                Amount (USD)
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
                 {SUGGESTED_AMOUNTS[category].map((value) => (
                   <button
                     key={value}
                     type="button"
                     onClick={() => setAmountUsd(value)}
-                    className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition ${
+                    className={cx(
+                      "rounded-lg border px-3 py-1.5 text-sm font-medium transition",
                       amountUsd === value
                         ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                    }`}
+                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300",
+                    )}
                   >
                     {formatUsd(value)}
                   </button>
                 ))}
-                <input
+                <Input
                   type="number"
                   min="1"
                   max="500"
                   value={amountUsd}
                   onChange={(e) => setAmountUsd(Number(e.target.value))}
-                  className="w-24 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-emerald-500"
+                  className="h-9 w-24 px-3 text-sm"
                 />
               </div>
             </div>
 
-            <label className="block text-sm font-medium text-slate-600">
-              Note (optional)
-              <input
+            <Field label="Note (optional)">
+              <Input
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="e.g. Bus fare to a medical appointment"
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-slate-900 outline-none focus:border-emerald-500"
               />
-            </label>
+            </Field>
 
-            <button
-              type="button"
+            <Button
               onClick={createRequest}
               disabled={busy || ref.trim().length < 2 || amountUsd <= 0}
-              className="w-full rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50"
+              className="w-full"
+              size="lg"
             >
               Create request
-            </button>
+            </Button>
           </div>
         </Card>
 
         {/* Requests */}
-        <Card className="p-6">
-          <h2 className="text-lg font-bold text-slate-900">Requests</h2>
+        <Card className="p-6 sm:p-7">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-slate-900">Requests</h2>
+            {summary ? (
+              <Badge tone="amber">{summary.pendingCount} pending</Badge>
+            ) : null}
+          </div>
           {requests.length === 0 ? (
             <p className="mt-3 text-sm text-slate-500">No requests yet.</p>
           ) : (
@@ -293,7 +317,7 @@ export default function AdminPage() {
               {requests.map((request) => (
                 <li
                   key={request.id}
-                  className="rounded-xl border border-slate-200 p-4"
+                  className="rounded-xl border border-slate-200 p-4 transition hover:border-slate-300"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
@@ -320,22 +344,21 @@ export default function AdminPage() {
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     {request.status === "pending" ? (
                       <>
-                        <button
-                          type="button"
+                        <Button
+                          size="sm"
                           onClick={() => decide(request.id, "approve")}
                           disabled={busy}
-                          className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50"
                         >
                           Approve
-                        </button>
-                        <button
-                          type="button"
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
                           onClick={() => decide(request.id, "reject")}
                           disabled={busy}
-                          className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
                         >
                           Reject
-                        </button>
+                        </Button>
                       </>
                     ) : null}
                     {request.voucherId ? (
@@ -354,10 +377,14 @@ export default function AdminPage() {
         </Card>
       </div>
 
-      {/* Vouchers + redemptions */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="p-6">
-          <h2 className="text-lg font-bold text-slate-900">Vouchers</h2>
+        <Card className="p-6 sm:p-7">
+          <div className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50 text-sky-600 ring-1 ring-inset ring-sky-100">
+              <IconQr />
+            </span>
+            <h2 className="text-lg font-bold text-slate-900">Vouchers</h2>
+          </div>
           {vouchers.length === 0 ? (
             <p className="mt-3 text-sm text-slate-500">
               No vouchers issued yet. Approve a request to issue one.
@@ -396,10 +423,15 @@ export default function AdminPage() {
           )}
         </Card>
 
-        <Card className="p-6">
-          <h2 className="text-lg font-bold text-slate-900">
-            Redemptions & rejected attempts
-          </h2>
+        <Card className="p-6 sm:p-7">
+          <div className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-100">
+              <IconCheck />
+            </span>
+            <h2 className="text-lg font-bold text-slate-900">
+              Redemptions & rejected attempts
+            </h2>
+          </div>
           {redemptions.length === 0 && attempts.length === 0 ? (
             <p className="mt-3 text-sm text-slate-500">
               Nothing redeemed yet. Try the partner simulator.
@@ -441,6 +473,12 @@ export default function AdminPage() {
         Demo rate: 1 SOL ≈ {formatUsd(balance?.solUsdRate ?? 150)}. Amounts in USD
         are illustrative. Vouchers are prototype benefits with no real value.
       </Notice>
+
+      <div className="flex items-center gap-2 text-xs text-slate-400">
+        <IconUsers />
+        Beneficiaries are pseudonymous references — no personal data is stored
+        on-chain.
+      </div>
     </div>
   );
 }

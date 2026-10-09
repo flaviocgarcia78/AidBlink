@@ -83,6 +83,8 @@ public/
   actions.json    Blinks action routing
 docs/
   ARCHITECTURE.md, PITCH.md, DEMO_SCRIPT.md, SUBMISSION.md
+Dockerfile, docker-compose.yml, .dockerignore
+LICENSE
 ```
 
 ## Getting started
@@ -128,6 +130,34 @@ npm run typecheck   # tsc --noEmit
 node scripts/gen-keys.mjs   # generate a treasury + anchor keypair
 node scripts/smoke.mjs      # end-to-end API smoke test
 ```
+
+## Running with Docker
+
+The app ships with a multi-stage `Dockerfile` (Next.js `standalone` output) and a
+`docker-compose.yml` for a one-command demo.
+
+```bash
+# 1. Provide runtime configuration (treasury address + voucher secret).
+cp .env.example .env
+
+# 2. Build and start.
+docker compose up --build
+
+# 3. Open http://localhost:3000
+```
+
+Notes:
+
+- **`NEXT_PUBLIC_*` values are inlined at build time.** Changing the app URL,
+  network or treasury display address requires a rebuild:
+  `docker compose build --no-cache`.
+- Server-only secrets (`AIDBLINK_VOUCHER_SECRET`, `AIDBLINK_ANCHOR_SECRET_KEY`)
+  are injected at **runtime**, never baked into the image.
+- The file-backed demo store lives on the named volume `aidblink-data`
+  (`/app/.data`), so state survives container restarts. Reset it with
+  `docker compose down -v`.
+- Run the built image directly with `docker run --rm -p 3000:3000 --env-file
+  .env aidblink:latest`.
 
 ## The Blink (Solana Action)
 
@@ -181,3 +211,7 @@ succeeds. Fund the anchor account with Devnet SOL (e.g. `solana airdrop 1
 AidBlink is a hackathon prototype. It is not a financial product, is not
 affiliated with any real aid organization, and its vouchers cannot be exchanged
 for goods or services.
+
+## License
+
+Released under the [MIT License](./LICENSE). © 2026 AidBlink contributors.

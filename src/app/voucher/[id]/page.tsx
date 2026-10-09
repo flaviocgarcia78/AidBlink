@@ -1,10 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Badge, Card, CategoryPill, Notice, VoucherStatusBadge } from "@/components/ui";
+import {
+  Button,
+  ButtonLink,
+  CategoryPill,
+  Card,
+  Notice,
+  PageHeader,
+  VoucherStatusBadge,
+} from "@/components/ui";
+import { IconCheck, IconLock, IconQr, IconScan } from "@/components/icons";
 import { apiGet } from "@/lib/client";
+import { env } from "@/lib/env";
 import { formatDateTime, formatUsd } from "@/lib/money";
 import type { Voucher } from "@/lib/types";
 import { CATEGORY_ICONS, CATEGORY_LABELS } from "@/lib/types";
@@ -15,6 +24,29 @@ interface VoucherDetail {
   code: string;
   redeemUrl: string;
   qrDataUrl: string;
+}
+
+function Row({
+  term,
+  value,
+  mono,
+}: {
+  term: string;
+  value: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className="flex justify-between gap-4 py-2.5">
+      <dt className="text-slate-500">{term}</dt>
+      <dd
+        className={
+          mono ? "mono font-semibold text-slate-800" : "font-medium text-slate-800"
+        }
+      >
+        {value}
+      </dd>
+    </div>
+  );
 }
 
 export default function VoucherPage() {
@@ -50,14 +82,11 @@ export default function VoucherPage() {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-xl space-y-4">
         <Notice tone="red">{error}</Notice>
-        <Link
-          href="/admin"
-          className="mt-4 inline-block text-sm font-semibold text-emerald-600 hover:underline"
-        >
+        <ButtonLink href="/admin" variant="secondary">
           ← Back to dashboard
-        </Link>
+        </ButtonLink>
       </div>
     );
   }
@@ -70,15 +99,12 @@ export default function VoucherPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <header className="space-y-3">
-        <Badge tone="green">Step 3 · Deliver</Badge>
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-          Benefit voucher
-        </h1>
-        <p className="text-slate-600">
-          Show this QR code at a participating partner. It can be redeemed once.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Step 3 · Deliver"
+        title="Benefit voucher"
+        description="Show this QR code at a participating partner. It can be redeemed once."
+        actions={<VoucherStatusBadge status={voucher.status} />}
+      />
 
       <Notice tone="amber">
         Prototype — this is not a real benefit and the QR code has no monetary
@@ -86,104 +112,100 @@ export default function VoucherPage() {
       </Notice>
 
       <Card className="overflow-hidden">
-        <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 px-6 py-6 text-white">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold uppercase tracking-widest text-emerald-50">
-              AidBlink voucher
-            </span>
-            <span className="text-2xl" aria-hidden>
+        <div className="relative overflow-hidden bg-gradient-to-br from-emerald-600 to-teal-600 px-6 py-7 text-white">
+          <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+          <div className="relative flex items-start justify-between">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-50/90">
+                AidBlink voucher
+              </span>
+              <p className="mt-4 text-4xl font-extrabold tracking-tight">
+                {formatUsd(voucher.amountUsd)}
+              </p>
+              <p className="mt-1 text-emerald-50">
+                {CATEGORY_LABELS[voucher.category]} · single use
+              </p>
+            </div>
+            <span className="text-3xl" aria-hidden>
               {CATEGORY_ICONS[voucher.category]}
             </span>
           </div>
-          <p className="mt-4 text-4xl font-extrabold">
-            {formatUsd(voucher.amountUsd)}
-          </p>
-          <p className="text-emerald-50">
-            {CATEGORY_LABELS[voucher.category]} · single use
-          </p>
         </div>
 
-        <div className="grid gap-6 p-6 sm:grid-cols-[auto_1fr]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={data.qrDataUrl}
-            alt="Voucher QR code"
-            width={220}
-            height={220}
-            className="mx-auto rounded-xl border border-slate-200"
-          />
-          <div className="space-y-4">
+        <div className="grid gap-7 p-6 sm:grid-cols-[auto_1fr] sm:p-7">
+          <div className="mx-auto">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={data.qrDataUrl}
+              alt="Voucher QR code"
+              width={220}
+              height={220}
+              className="rounded-xl border border-slate-200 bg-white p-2"
+            />
+            <p className="mono mt-3 text-center text-sm font-semibold tracking-widest text-slate-700">
+              {data.code}
+            </p>
+          </div>
+
+          <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-2">
               <VoucherStatusBadge status={voucher.status} />
               <CategoryPill category={voucher.category} />
             </div>
-            <dl className="space-y-2 text-sm">
-              <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Voucher</dt>
-                <dd className="mono font-semibold text-slate-800">{voucher.id}</dd>
-              </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Code</dt>
-                <dd className="mono font-semibold text-slate-800">{data.code}</dd>
-              </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Beneficiary</dt>
-                <dd className="font-semibold text-slate-800">
-                  {voucher.beneficiaryRef}
-                </dd>
-              </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Issued</dt>
-                <dd className="text-slate-800">{formatDateTime(voucher.issuedAt)}</dd>
-              </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Valid until</dt>
-                <dd className="text-slate-800">{formatDateTime(voucher.expiresAt)}</dd>
-              </div>
+
+            <dl className="divide-y divide-slate-100 text-sm">
+              <Row term="Voucher" value={voucher.id} mono />
+              <Row term="Beneficiary" value={voucher.beneficiaryRef} />
+              <Row term="Issued" value={formatDateTime(voucher.issuedAt)} />
+              <Row term="Valid until" value={formatDateTime(voucher.expiresAt)} />
               {voucher.redeemedAt ? (
-                <div className="flex justify-between gap-4">
-                  <dt className="text-slate-500">Redeemed</dt>
-                  <dd className="text-slate-800">
-                    {formatDateTime(voucher.redeemedAt)}
-                    {voucher.redeemedBy ? ` · ${voucher.redeemedBy}` : ""}
-                  </dd>
-                </div>
-              ) : null}
-              {voucher.anchorSignature ? (
-                <div className="flex justify-between gap-4">
-                  <dt className="text-slate-500">Anchor</dt>
-                  <dd className="mono truncate text-xs text-slate-500">
-                    {voucher.anchorSignature}
-                  </dd>
-                </div>
+                <Row
+                  term="Redeemed"
+                  value={`${formatDateTime(voucher.redeemedAt)}${
+                    voucher.redeemedBy ? ` · ${voucher.redeemedBy}` : ""
+                  }`}
+                />
               ) : null}
             </dl>
 
-            <button
-              type="button"
-              onClick={copyLink}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-            >
+            {voucher.anchorSignature ? (
+              <div className="flex items-start gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                <IconCheck className="mt-0.5 shrink-0 text-emerald-600" />
+                <span className="mono break-all">
+                  Anchored on-chain: {voucher.anchorSignature}
+                </span>
+              </div>
+            ) : null}
+
+            <Button variant="secondary" size="sm" onClick={copyLink}>
               {copied ? "Link copied" : "Copy redemption link"}
-            </button>
+            </Button>
           </div>
         </div>
       </Card>
 
       <div className="flex flex-wrap gap-3">
-        <Link
+        <ButtonLink
           href={`/redeem?token=${encodeURIComponent(data.token)}`}
-          className="rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
+          size="lg"
         >
+          <IconScan />
           Open in partner simulator
-        </Link>
-        <Link
-          href="/admin"
-          className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-600 transition hover:bg-slate-50"
-        >
+        </ButtonLink>
+        <ButtonLink href="/admin" size="lg" variant="secondary">
           Back to dashboard
-        </Link>
+        </ButtonLink>
       </div>
+
+      <p className="flex items-center gap-2 text-xs text-slate-400">
+        <IconLock />
+        The token is signed by the server. Single use is enforced server-side —
+        not by the QR image.
+      </p>
+      <p className="flex items-center gap-2 text-xs text-slate-400">
+        <IconQr />
+        Redemption URL points at {env.appUrl}/redeem
+      </p>
     </div>
   );
 }

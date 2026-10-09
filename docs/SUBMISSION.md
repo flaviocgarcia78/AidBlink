@@ -11,7 +11,8 @@ Everything needed to publish the project and record the two Colosseum videos.
       documents every variable.
 - [ ] `npm install && npm run build` passes from a clean clone.
 - [ ] `node scripts/smoke.mjs` passes against a running server.
-- [ ] License file added (optional, recommended).
+- [x] MIT `LICENSE` file included.
+- [x] `Dockerfile` + `docker-compose.yml` for a one-command run.
 
 ## Videos (two separate files)
 
@@ -33,6 +34,13 @@ Recording tips:
 npm install
 cp .env.example .env          # set AIDBLINK_TREASURY_ADDRESS
 npm run dev                   # http://localhost:3000
+```
+
+Or, with no local Node setup, use Docker:
+
+```bash
+cp .env.example .env
+docker compose up --build     # http://localhost:3000
 ```
 
 Optional, to prove live on-chain activity:
